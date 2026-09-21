@@ -1,0 +1,1820 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>公里 (km) - 香港小學數學</title>
+  <!-- 引入 html2canvas 程式庫以支援報告圖片下載 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    /* 全局樣式與 iPad 觸控優化 */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Microsoft JhengHei", sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: #f0f4f8;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      touch-action: manipulation;
+    }
+
+    /* 頂部導覽列 */
+    header {
+      background-color: #2b5278;
+      color: white;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    header h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    .lang-btn {
+      background-color: transparent;
+      border: 1px solid white;
+      color: white;
+      padding: 8px 18px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all 0.2s;
+      min-height: 44px;
+    }
+
+    .lang-btn:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .page-title {
+      text-align: center;
+      font-size: 1.8rem;
+      color: #2b5278;
+      margin-bottom: 30px;
+      font-weight: bold;
+    }
+
+    /* 首頁選單網格 */
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 30px 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      border: 2px solid transparent;
+      min-height: 120px;
+    }
+
+    .card:hover, .card:active {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      border-color: #4a90e2;
+    }
+
+    .card h3 {
+      font-size: 1.4rem;
+      color: #1a365d;
+      margin-bottom: 15px;
+    }
+
+    .card p {
+      color: #666;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .card-center {
+      grid-column: 1 / -1;
+      justify-self: center;
+      width: 50%;
+    }
+
+    @media (max-width: 600px) {
+      .menu-grid { grid-template-columns: 1fr; }
+      .card-center { grid-column: auto; width: 100%; }
+    }
+
+    /* 練習界面 */
+    .quiz-wrapper {
+      max-width: 750px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .back-nav-btn {
+      background: white;
+      border: 1px solid #cbd5e0;
+      color: #4a5568;
+      padding: 10px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: bold;
+      margin-bottom: 15px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+      transition: all 0.2s;
+      min-height: 44px;
+    }
+
+    .back-nav-btn:hover {
+      background-color: #edf2f7;
+      color: #2b6cb0;
+    }
+
+    .quiz-card {
+      background: white;
+      border-radius: 16px;
+      padding: 35px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+      width: 100%;
+    }
+
+    .quiz-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #edf2f7;
+      padding-bottom: 12px;
+    }
+
+    .quiz-progress {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #3182ce;
+    }
+
+    .unit-tag {
+      background-color: #ebf8ff;
+      color: #2b6cb0;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.95rem;
+      font-weight: bold;
+    }
+
+    .diff-tag {
+      margin-left: 8px;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: bold;
+    }
+
+    .diff-primary { background-color: #c6f6d5; color: #22543d; }
+    .diff-inter { background-color: #feebc8; color: #744210; }
+    .diff-adv { background-color: #fed7d7; color: #9b2c2c; }
+
+    /* 量度與卡通地圖顯示區域 */
+    .measurement-display {
+      width: 100%;
+      background: #ffffff;
+      border: 2px dashed #a3d9a5;
+      border-radius: 16px;
+      padding: 15px 10px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow-x: auto;
+      transition: border-color 0.4s ease, box-shadow 0.4s ease;
+    }
+
+    .measurement-display svg {
+      max-width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* 替代搖晃的效果：高亮吸引動畫 */
+    .highlight-glow {
+      border-color: #38a169 !important;
+      box-shadow: 0 0 20px rgba(56, 161, 105, 0.4) !important;
+      animation: pulseBorder 1.5s infinite alternate ease-in-out;
+    }
+
+    @keyframes pulseBorder {
+      0% { box-shadow: 0 0 10px rgba(56, 161, 105, 0.3); }
+      100% { box-shadow: 0 0 25px rgba(56, 161, 105, 0.7); }
+    }
+
+    /* 虛線流動動畫（最短路徑吸引動畫） */
+    .flowing-path {
+      stroke-dasharray: 8, 5;
+      animation: dashFlow 1s linear infinite;
+    }
+
+    @keyframes dashFlow {
+      to { stroke-dashoffset: -26; }
+    }
+
+    .equation {
+      font-size: 1.3rem;
+      font-weight: bold;
+      text-align: center;
+      margin: 20px 0;
+      color: #2d3748;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .answer-input::-webkit-outer-spin-button,
+    .answer-input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    .answer-input[type=number] {
+      -moz-appearance: textfield;
+    }
+
+    .answer-input {
+      font-size: 1.6rem;
+      width: 130px;
+      text-align: center;
+      border: 2px solid #cbd5e0;
+      border-radius: 8px;
+      padding: 6px 6px;
+      outline: none;
+      transition: background-color 0.3s, border-color 0.2s;
+      min-height: 50px;
+    }
+
+    .answer-input:focus { border-color: #3182ce; }
+
+    .input-correct {
+      background-color: #c6f6d5 !important;
+      border-color: #38a169 !important;
+      color: #22543d !important;
+    }
+
+    .input-wrong {
+      background-color: #fed7d7 !important;
+      border-color: #e53e3e !important;
+      animation: shake 0.5s ease-in-out;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-6px); }
+      40%, 80% { transform: translateX(6px); }
+    }
+
+    .btn {
+      display: inline-block;
+      width: 100%;
+      padding: 14px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      text-align: center;
+      min-height: 48px;
+    }
+
+    .btn:active { transform: scale(0.99); }
+    .btn-primary { background-color: #3182ce; color: white; }
+    .btn-primary:hover { background-color: #2b6cb0; }
+    .btn-success { background-color: #38a169; color: white; }
+    .btn-success:hover { background-color: #2f855a; }
+    .btn-purple { background-color: #8e44ad; color: white; margin-bottom: 10px; }
+    .btn-purple:hover { background-color: #7d3c98; }
+    .btn-sky { background-color: #38bdf8; color: white; margin-bottom: 10px; }
+    .btn-sky:hover { background-color: #0284c7; }
+    .btn-gray { background-color: #7f8c8d; color: white; }
+    .btn-gray:hover { background-color: #636e72; }
+
+    .feedback-box {
+      margin-top: 20px;
+      padding: 18px;
+      border-radius: 10px;
+      text-align: left;
+      font-size: 1rem;
+    }
+
+    .feedback-success { background-color: #c6f6d5; color: #22543d; border: 1px solid #9ae6b4; text-align: center; }
+    .feedback-warning { background-color: #feebc8; color: #744210; border: 1px solid #fbd38d; }
+    .feedback-danger { background-color: #fff5f5; color: #742a2a; border: 1px solid #feb2b2; }
+
+    /* 圖像化拆解圖表 */
+    .visual-diagram-container {
+      margin-top: 15px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .diagram-brace-top, .diagram-brace-bottom {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #2d3748;
+      margin: 4px 0;
+      text-align: center;
+      line-height: 1.2;
+    }
+
+    .diagram-table {
+      display: flex;
+      border: 2px solid #000;
+      border-radius: 2px;
+      overflow: hidden;
+      margin: 8px 0;
+      max-width: 100%;
+      overflow-x: auto;
+    }
+
+    .diagram-column {
+      display: flex;
+      flex-direction: column;
+      min-width: 80px;
+      text-align: center;
+    }
+
+    .diagram-column:not(:last-child) {
+      border-right: 2px solid #000;
+    }
+
+    .diagram-cell-top {
+      background-color: #f4a2a1;
+      color: #000;
+      padding: 10px 6px;
+      font-weight: bold;
+      border-bottom: 2px solid #000;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .diagram-cell-bottom {
+      background-color: #fbe389;
+      color: #000;
+      padding: 10px 6px;
+      font-weight: bold;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* 分析報告界面 */
+    .report-card {
+      background: white;
+      border-radius: 12px;
+      padding: 25px;
+      max-width: 650px;
+      margin: 0 auto;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+
+    .report-title {
+      text-align: center;
+      color: #3182ce;
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      font-weight: bold;
+    }
+
+    .report-section { background-color: #f8fafc; border-radius: 8px; padding: 12px 20px; margin-bottom: 15px; }
+    .report-row { display: flex; justify-content: space-between; padding: 6px 0; color: #4a5568; font-size: 0.95rem; }
+    .report-row.dashed { border-bottom: 1px dashed #cbd5e0; }
+    .report-val { font-weight: bold; }
+    .val-green { color: #276749; }
+    .val-red { color: #9b2c2c; }
+    .val-blue { color: #0284c7; }
+
+    .section-label { font-weight: bold; color: #2d3748; margin: 15px 0 10px 0; font-size: 1rem; }
+    .list-box { border-radius: 8px; padding: 15px; margin-bottom: 15px; }
+    .list-box.correct-bg { background-color: #f7fafc; }
+    .list-box.wrong-bg { background-color: #f7fafc; }
+
+    .list-title { font-weight: bold; font-size: 1.05rem; display: flex; align-items: center; gap: 6px; margin-bottom: 12px; }
+
+    .item-card-correct {
+      background: #f0fff4; border: 1px solid #c6f6d5; border-radius: 8px; padding: 10px 16px; margin-bottom: 8px;
+      display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem; color: #22543d; font-weight: 500;
+    }
+
+    .item-card-wrong {
+      background: #fff5f5; border: 1px solid #fed7d7; border-radius: 8px; padding: 10px 16px; margin-bottom: 8px;
+      display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem; color: #9b2c2c; font-weight: 500;
+    }
+
+    /* Modal 彈窗 */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5);
+      display: flex; justify-content: center; align-items: center; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.2s ease;
+    }
+    .modal-overlay.active { opacity: 1; pointer-events: auto; }
+    .modal-box { background: white; padding: 25px; border-radius: 12px; max-width: 400px; width: 90%; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+    .modal-box h3 { margin-bottom: 12px; color: #2b5278; }
+    .modal-box p { margin-bottom: 20px; color: #4a5568; }
+    .modal-buttons { display: flex; gap: 10px; }
+    .hidden { display: none !important; }
+
+    @media (max-width: 768px) {
+      .quiz-card { padding: 20px 15px; }
+      .equation { font-size: 1.1rem; gap: 4px; }
+      .answer-input { font-size: 1.2rem; width: 95px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 頂部導覽列 -->
+  <header>
+    <h1 id="header-title">公里 (km)</h1>
+    <button id="lang-toggle-btn" class="lang-btn" onclick="toggleLanguage()">English</button>
+  </header>
+
+  <main>
+    <div class="container">
+
+      <!-- 1. 首頁選擇界面 -->
+      <div id="page-home">
+        <h2 id="home-subtitle" class="page-title">請選擇學習單元</h2>
+        <div class="menu-grid">
+          <div class="card" onclick="startQuiz('km_to_m')">
+            <h3 id="opt1-title">公里 ↔ 米</h3>
+            <p id="desc-opt1">學習公里轉換為米及米轉換為公里。掌握 1 km = 1000 m 的換算技巧。</p>
+          </div>
+          <div class="card" onclick="startQuiz('complex_to_single')">
+            <h3 id="opt2-title">複名數 → 單名數</h3>
+            <p id="desc-opt2">將複合單位（公里和米）轉換為單一單位（米），例如：3 公里 45 米 = 3045 米。</p>
+          </div>
+          <div class="card card-center" onclick="startQuiz('measurement')">
+            <h3 id="opt3-title">最短路徑</h3>
+            <p id="desc-opt3">觀察可愛的地圖路線圖，找出由起點至終點的最短路徑距離！</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. 答題界面 -->
+      <div id="page-quiz" class="hidden">
+        <div class="quiz-wrapper">
+          <button class="back-nav-btn" onclick="askReturnHome()">
+            <span id="lbl-back-btn">← 返回階段選擇</span>
+          </button>
+
+          <div class="quiz-card">
+            <div class="quiz-header">
+              <div>
+                <span id="quiz-mode-name" class="unit-tag">最短路徑</span>
+                <span id="quiz-diff-tag" class="diff-tag diff-primary">初階</span>
+              </div>
+              <span id="quiz-progress-text" class="quiz-progress">題目 1 / 10</span>
+            </div>
+
+            <!-- 單元三 SVG 卡通地圖容器 -->
+            <div id="measurement-area" class="measurement-display hidden"></div>
+
+            <!-- 算式表達區 -->
+            <div class="equation">
+              <span id="equation-prefix"></span>
+              
+              <span id="single-input-container">
+                <input type="number" id="answer-input" class="answer-input" min="0" step="any" placeholder="答案" autocomplete="off" inputmode="decimal" onkeypress="handleKeyPress(event)" onwheel="this.blur()">
+              </span>
+
+              <span id="unit-label">公里</span>
+            </div>
+
+            <div id="action-area">
+              <button id="btn-submit" class="btn btn-primary" onclick="checkAnswer()">提交答案</button>
+              <button id="btn-next" class="btn btn-success hidden" onclick="nextQuestion()">再答一題 ➔</button>
+            </div>
+
+            <div id="feedback-area" class="hidden"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. 表現分析報告 -->
+      <div id="page-report" class="hidden">
+        <div id="report-card-to-capture" class="report-card">
+          <h2 id="report-main-title" class="report-title">練習完成！表現分析報告</h2>
+
+          <div class="report-section">
+            <div class="report-row dashed">
+              <span id="lbl-start-time">開始時間：</span>
+              <span id="val-start-time" class="report-val">--</span>
+            </div>
+            <div class="report-row dashed">
+              <span id="lbl-end-time">完成時間：</span>
+              <span id="val-end-time" class="report-val">--</span>
+            </div>
+            <div class="report-row">
+              <span id="lbl-duration">總用時：</span>
+              <span id="val-duration" class="report-val val-blue">--</span>
+            </div>
+          </div>
+
+          <div class="report-section">
+            <div class="report-row dashed">
+              <span id="lbl-total-correct">總答對題數：</span>
+              <span id="val-correct-count" class="report-val val-green">0 / 10</span>
+            </div>
+            <div class="report-row">
+              <span id="lbl-accuracy">整體正確率：</span>
+              <span id="val-accuracy" class="report-val">0%</span>
+            </div>
+          </div>
+
+          <div class="section-label" id="lbl-mastery-title">各主題掌握度分析</div>
+          <div class="report-section">
+            <div class="report-row">
+              <span id="report-unit-name">1. 最短路徑</span>
+              <span id="val-unit-mastery" class="report-val">0 / 10 (0%)</span>
+            </div>
+          </div>
+
+          <div class="list-box correct-bg">
+            <div class="list-title val-green">
+              <span>☑</span> <span id="lbl-correct-title">答對的題目</span>
+            </div>
+            <div id="correct-list-container"></div>
+          </div>
+
+          <div class="list-box wrong-bg">
+            <div class="list-title val-red">
+              <span>✕</span> <span id="lbl-wrong-title">答錯 / 需要協助的題目</span>
+            </div>
+            <div id="wrong-list-container"></div>
+          </div>
+
+          <div data-html2canvas-ignore="true" style="margin-top: 20px;">
+            <button class="btn btn-purple" onclick="downloadReportImage()"><span id="lbl-btn-download">💾 下載報告圖片</span></button>
+            <button class="btn btn-sky" onclick="retryPractice()"><span id="lbl-btn-retry">🔄 我想再試</span></button>
+            <button class="btn btn-gray" onclick="goHome()"><span id="lbl-btn-home">回到主頁重新選擇</span></button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- 通用 Modal -->
+  <div id="custom-modal" class="modal-overlay">
+    <div class="modal-box">
+      <h3 id="modal-title">標題</h3>
+      <p id="modal-msg">內容訊息</p>
+      <div class="modal-buttons">
+        <button id="modal-cancel-btn" class="btn btn-gray" style="flex: 1;" onclick="closeModal()">取消</button>
+        <button id="modal-confirm-btn" class="btn btn-primary" style="flex: 1;" onclick="confirmModalAction()">確定</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const i18n = {
+      zh: {
+        headerTitle: "公里 (km)",
+        langBtn: "English",
+        homeSubtitle: "請選擇學習單元",
+        opt1Title: "公里 ↔ 米",
+        descOpt1: "學習公里轉換為米及米轉換為公里。掌握 1 km = 1000 m 的換算技巧。",
+        opt2Title: "複名數 → 單名數",
+        descOpt2: "將複合單位（公里和米）轉換為單一單位（米），例如：3 公里 45 米 = 3045 米。",
+        opt3Title: "最短路徑",
+        descOpt3: "觀察可愛的地圖路線圖，找出由起點至終點的最短路徑距離！",
+        unit1: "公里 ↔ 米",
+        unit2: "複名數 → 單名數",
+        unit3: "最短路徑",
+        diffPrimary: "初階",
+        diffInter: "中階",
+        diffAdv: "高階",
+        qProgress: "題目",
+        questionLabel: "第 {n} 題",
+        ansLabel: "答案",
+        yourAnsLabel: "你的回答",
+        correctAnsLabel: "正確答案",
+        backBtn: "← 返回階段選擇",
+        placeholderAns: "答案",
+        submitBtn: "提交答案",
+        nextBtn: "再答一題 ➔",
+        unitM: "米",
+        unitKm: "公里",
+        praise: ["太棒了！答對了！🌟", "非常優秀，計算得很精確！👏", "答對了！繼續保持！🎉", "真聰明！完全掌握了最短路徑計算！💪"],
+        encourage: ["再試一次！比較一下各條可能路線的總長度！", "沒關係，重新計算看看，你可以的！", "加油！仔細把沿途路線的距離加起來！"],
+        hintKmToM: "解題思路：1 公里 (km) = 1000 米 (m)，將公里數乘以 1000 即可。",
+        hintComplex: "解題思路：先將公里部分乘以 1000 化為米，加上剩餘的米數。",
+        hintMToKm: "解題思路：1000 米 (m) = 1 公里 (km)，將米數除以 1000 即可。",
+        hintMeasure: "解題思路：找出由起點至終點的所有可能路徑，計算並比較哪一條路線總距離最短。",
+        stepTitle: "完整解題過程與圖像化拆解：",
+        stepKmToM: `
+          1. 記住長度單位公式：<strong>1 km = 1000 m</strong>。<br>
+          2. 計算：<strong>{num} × 1000</strong> = <strong>{ans}</strong>。<br>
+          3. 得出正確答案為：<strong style="color:#e53e3e; font-size:1.2rem;">{ans} m</strong>
+        `,
+        stepMToKm: `
+          1. 記住長度單位公式：<strong>1000 m = 1 km</strong>。<br>
+          2. 計算：<strong>{num} ÷ 1000</strong> = <strong>{ans}</strong>。<br>
+          3. 得出正確答案為：<strong style="color:#e53e3e; font-size:1.2rem;">{ans} km</strong>
+        `,
+        stepComplex: `
+          1. 分拆計算：<strong>{km} km = {kmVal} m</strong>。<br>
+          2. 相加總和：<strong>{kmVal} + {m}</strong> = <strong>{ans}</strong>。<br>
+          3. 得出正確答案為：<strong style="color:#e53e3e; font-size:1.2rem;">{ans} m</strong>
+        `,
+        stepMeasure: `
+          1. 最短路徑為：<strong>{path}</strong>。<br>
+          2. 路線距離計算：<strong>{calc}</strong>。<br>
+          3. 得出最短距離為：<strong style="color:#e53e3e; font-size:1.2rem;">{ans} {unit}</strong>
+        `,
+        diagramMeasureDetail: `
+          • 起點：<strong>{start}</strong>，終點：<strong>{end}</strong><br>
+          • 最短路線：<strong>{path}</strong><br>
+          • 計算：<strong>{calc} = <span style="color:#e53e3e; font-size:1.2rem;">{ans} {unit}</span></strong>
+        `,
+        noWrong: "太厲害了！沒有答錯的題目！",
+        noCorrect: "無答對題目",
+        reportTitle: "練習完成！表現分析報告",
+        startTime: "開始時間：",
+        endTime: "完成時間：",
+        durationTime: "總用時：",
+        totalCorrect: "總答對題數：",
+        accuracy: "整體正確率：",
+        masteryTitle: "各主題掌握度分析",
+        correctTitle: "答對的題目",
+        wrongTitle: "答錯 / 需要協助的題目",
+        btnDownload: "💾 下載報告圖片",
+        btnRetry: "🔄 我想再試",
+        btnHome: "回到主頁重新選擇",
+        modalReturnTitle: "返回階段選擇",
+        modalReturnMsg: "確定要返回主選單嗎？目前的答題進度將不會被保存。",
+        diagramTitle: "圖像化解題拆解：",
+        modalCancel: "取消",
+        modalStart: "確定",
+        howManyM: "多少 m ？",
+        howManyKm: "多少 km ？",
+        shortestPathQ: "由【{start}】前往【{end}】的最短路徑是多少{unit}？"
+      },
+      en: {
+        headerTitle: "Kilometre (km)",
+        langBtn: "繁體中文",
+        homeSubtitle: "Please Select a Learning Unit",
+        opt1Title: "km ↔ m",
+        descOpt1: "Learn converting km to m and m to km using 1 km = 1000 m.",
+        opt2Title: "Compound → Single Unit",
+        descOpt2: "Convert compound units (km & m) into a single unit (m). e.g., 3 km 45 m = 3045 m.",
+        opt3Title: "Shortest Path",
+        descOpt3: "Observe the cute map graph and find the shortest path between two places!",
+        unit1: "km ↔ m",
+        unit2: "Compound → Single Unit",
+        unit3: "Shortest Path",
+        diffPrimary: "Basic",
+        diffInter: "Inter",
+        diffAdv: "Adv",
+        qProgress: "Question",
+        questionLabel: "Q{n}",
+        ansLabel: "Ans",
+        yourAnsLabel: "Your Ans",
+        correctAnsLabel: "Correct Ans",
+        backBtn: "← Back to Stage Selection",
+        placeholderAns: "Ans",
+        submitBtn: "Submit Answer",
+        nextBtn: "Next Question ➔",
+        unitM: "m",
+        unitKm: "km",
+        praise: ["Great job! That's correct! 🌟", "Excellent calculation! 👏", "Correct! Keep it up! 🎉", "Awesome! Mastered shortest path calculations! 💪"],
+        encourage: ["Try again! Compare total distances of different possible routes!", "It's okay, recalculate the value again!", "Keep going! Add up distances carefully!"],
+        hintKmToM: "Solution Hint: 1 km = 1000 m. Multiply the number of km by 1000.",
+        hintComplex: "Solution Hint: Convert km to m (multiply by 1000) first, then add remaining meters.",
+        hintMToKm: "Solution Hint: 1000 m = 1 km. Divide the number of m by 1000.",
+        hintMeasure: "Solution Hint: Identify all routes from start to end, and compare their total distances.",
+        stepTitle: "Solution & Visual Breakdown:",
+        stepKmToM: `
+          1. Formula: <strong>1 km = 1000 m</strong>.<br>
+          2. Calculate: <strong>{num} × 1000</strong> = <strong>{ans}</strong>.<br>
+          3. Correct answer: <strong style="color:#e53e3e; font-size:1.2rem;">{ans} m</strong>
+        `,
+        stepMToKm: `
+          1. Formula: <strong>1000 m = 1 km</strong>.<br>
+          2. Calculate: <strong>{num} ÷ 1000</strong> = <strong>{ans}</strong>.<br>
+          3. Correct answer: <strong style="color:#e53e3e; font-size:1.2rem;">{ans} km</strong>
+        `,
+        stepComplex: `
+          1. Convert km part: <strong>{km} km = {kmVal} m</strong>.<br>
+          2. Add together: <strong>{kmVal} + {m}</strong> = <strong>{ans}</strong>.<br>
+          3. Correct answer: <strong style="color:#e53e3e; font-size:1.2rem;">{ans} m</strong>
+        `,
+        stepMeasure: `
+          1. Shortest path: <strong>{path}</strong>.<br>
+          2. Distance calculation: <strong>{calc}</strong>.<br>
+          3. Shortest distance: <strong style="color:#e53e3e; font-size:1.2rem;">{ans} {unit}</strong>
+        `,
+        diagramMeasureDetail: `
+          • Start: <strong>{start}</strong>, End: <strong>{end}</strong><br>
+          • Shortest Path: <strong>{path}</strong><br>
+          • Calculation: <strong>{calc} = <span style="color:#e53e3e; font-size:1.2rem;">{ans} {unit}</span></strong>
+        `,
+        noWrong: "Amazing! No incorrect answers!",
+        noCorrect: "No correct questions",
+        reportTitle: "Practice Completed! Performance Report",
+        startTime: "Start Time:",
+        endTime: "Completion Time:",
+        durationTime: "Time Taken:",
+        totalCorrect: "Total Correct:",
+        accuracy: "Overall Accuracy:",
+        masteryTitle: "Topic Mastery Analysis",
+        correctTitle: "Correct Questions",
+        wrongTitle: "Incorrect / Needs Assistance",
+        btnDownload: "💾 Download Report Image",
+        btnRetry: "🔄 Try Again",
+        btnHome: "Back to Home",
+        modalReturnTitle: "Return to Stage Selection",
+        modalReturnMsg: "Are you sure you want to return to home? Current progress will be lost.",
+        diagramTitle: "Visual Breakdown Diagram:",
+        modalCancel: "Cancel",
+        modalStart: "Confirm",
+        howManyM: "How many m ?",
+        howManyKm: "How many km ?",
+        shortestPathQ: "What is the shortest distance from [{start}] to [{end}] ({unit})?"
+      }
+    };
+
+    let currentLang = 'zh';
+    let currentMode = '';
+    let questions = [];
+    let currentQIndex = 0;
+    let wrongAttempts = 0;
+    let records = [];
+    let startTimeObj = null;
+    let modalActionCallback = null;
+
+    function handleKeyPress(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const submitBtn = document.getElementById('btn-submit');
+        const nextBtn = document.getElementById('btn-next');
+        
+        if (!submitBtn.classList.contains('hidden')) {
+          checkAnswer();
+        } else if (!nextBtn.classList.contains('hidden')) {
+          nextQuestion();
+        }
+        return;
+      }
+    }
+
+    function toggleLanguage() {
+      currentLang = currentLang === 'zh' ? 'en' : 'zh';
+      const t = i18n[currentLang];
+      
+      document.getElementById('header-title').innerText = t.headerTitle;
+      document.getElementById('lang-toggle-btn').innerText = t.langBtn;
+      document.getElementById('home-subtitle').innerText = t.homeSubtitle;
+      document.getElementById('opt1-title').innerText = t.opt1Title;
+      document.getElementById('desc-opt1').innerText = t.descOpt1;
+      document.getElementById('opt2-title').innerText = t.opt2Title;
+      document.getElementById('desc-opt2').innerText = t.descOpt2;
+      document.getElementById('opt3-title').innerText = t.opt3Title;
+      document.getElementById('desc-opt3').innerText = t.descOpt3;
+      document.getElementById('lbl-back-btn').innerText = t.backBtn;
+      document.getElementById('answer-input').placeholder = t.placeholderAns;
+
+      if (!document.getElementById('page-quiz').classList.contains('hidden')) {
+        updateQuestionDisplay();
+      }
+    }
+
+    function generateUnit1Questions() {
+      const qList = [];
+      const usedKeys = new Set();
+
+      const configs = [
+        { diff: 'primary', type: 'km_to_m' },
+        { diff: 'primary', type: 'km_to_m' },
+        { diff: 'primary', type: 'km_to_m' },
+        { diff: 'inter',   type: 'km_to_m' },
+        { diff: 'inter',   type: 'km_to_m' },
+        { diff: 'inter',   type: 'km_to_m' },
+        { diff: 'adv',     type: 'm_to_km', sub: 'thousands' },
+        { diff: 'adv',     type: 'm_to_km', sub: 'thousands' },
+        { diff: 'adv',     type: 'm_to_km', sub: 'ten_thousands' },
+        { diff: 'adv',     type: 'm_to_km', sub: 'ten_thousands' }
+      ];
+
+      configs.forEach(cfg => {
+        let qObj = null;
+        while (!qObj) {
+          if (cfg.diff === 'primary') {
+            let km = Math.floor(Math.random() * 99) + 1;
+            while (km % 10 === 0) {
+              km = Math.floor(Math.random() * 99) + 1;
+            }
+            const key = 'primary_' + km;
+            if (!usedKeys.has(key)) {
+              usedKeys.add(key);
+              qObj = {
+                type: 'km_to_m',
+                diff: 'primary',
+                rawNum: km,
+                ans: (km * 1000).toString(),
+                targetUnit: '米',
+                targetUnitEn: 'm'
+              };
+            }
+          } else if (cfg.diff === 'inter') {
+            const tens = Math.floor(Math.random() * 9) + 1;
+            const km = tens * 10;
+            const key = 'inter_' + km;
+            if (!usedKeys.has(key)) {
+              usedKeys.add(key);
+              qObj = {
+                type: 'km_to_m',
+                diff: 'inter',
+                rawNum: km,
+                ans: (km * 1000).toString(),
+                targetUnit: '米',
+                targetUnitEn: 'm'
+              };
+            }
+          } else if (cfg.diff === 'adv') {
+            if (cfg.sub === 'thousands') {
+              const km = Math.floor(Math.random() * 9) + 1;
+              const mVal = km * 1000;
+              const key = 'adv_thou_' + mVal;
+              if (!usedKeys.has(key)) {
+                usedKeys.add(key);
+                qObj = {
+                  type: 'm_to_km',
+                  diff: 'adv',
+                  rawNum: mVal,
+                  ans: km.toString(),
+                  targetUnit: '公里',
+                  targetUnitEn: 'km'
+                };
+              }
+            } else {
+              const km = (Math.floor(Math.random() * 9) + 1) * 10;
+              const mVal = km * 1000;
+              const key = 'adv_tenthou_' + mVal;
+              if (!usedKeys.has(key)) {
+                usedKeys.add(key);
+                qObj = {
+                  type: 'm_to_km',
+                  diff: 'adv',
+                  rawNum: mVal,
+                  ans: km.toString(),
+                  targetUnit: '公里',
+                  targetUnitEn: 'km'
+                };
+              }
+            }
+          }
+        }
+        qList.push(qObj);
+      });
+
+      return qList;
+    }
+
+    function generateUnit2Questions() {
+      const qList = [];
+      const tracker = new Set();
+
+      const configs = [
+        { diff: 'primary' },
+        { diff: 'primary' },
+        { diff: 'primary' },
+        { diff: 'inter' },
+        { diff: 'inter' },
+        { diff: 'inter' },
+        { diff: 'adv', sub: 'single_digit' },
+        { diff: 'adv', sub: 'single_digit' },
+        { diff: 'adv', sub: 'double_digit' },
+        { diff: 'adv', sub: 'double_digit' }
+      ];
+
+      configs.forEach(cfg => {
+        let qObj = null;
+        while (!qObj) {
+          let km = 0;
+          let m = 0;
+
+          if (cfg.diff === 'primary') {
+            km = Math.floor(Math.random() * 99) + 1;
+            m = Math.floor(Math.random() * 900) + 100;
+          } else if (cfg.diff === 'inter') {
+            km = Math.floor(Math.random() * 99) + 1;
+            m = Math.floor(Math.random() * 99) + 1;
+          } else if (cfg.diff === 'adv') {
+            const tens = Math.floor(Math.random() * 9) + 1;
+            km = tens * 10;
+            if (cfg.sub === 'single_digit') {
+              m = Math.floor(Math.random() * 9) + 1;
+            } else {
+              m = Math.floor(Math.random() * 90) + 10;
+            }
+          }
+
+          const key = `${km}_${m}`;
+          if (!tracker.has(key)) {
+            tracker.add(key);
+            const totalM = km * 1000 + m;
+            qObj = {
+              type: 'complex_to_single',
+              diff: cfg.diff,
+              kmVal: km,
+              mVal: m,
+              ans: totalM.toString(),
+              targetUnit: '米',
+              targetUnitEn: 'm'
+            };
+          }
+        }
+        qList.push(qObj);
+      });
+
+      return qList;
+    }
+
+    // Dijkstra 最短路徑演算法 helper
+    function findShortestPath(nodes, edges, startNodeId, endNodeId) {
+      const graph = {};
+      nodes.forEach(n => graph[n.id] = []);
+      edges.forEach(e => {
+        graph[e.from].push({ to: e.to, weight: e.valInMeters, edge: e });
+        graph[e.to].push({ to: e.from, weight: e.valInMeters, edge: e });
+      });
+
+      const distances = {};
+      const previous = {};
+      const unvisited = new Set(nodes.map(n => n.id));
+
+      nodes.forEach(n => distances[n.id] = Infinity);
+      distances[startNodeId] = 0;
+
+      while (unvisited.size > 0) {
+        let current = null;
+        let smallestDist = Infinity;
+        unvisited.forEach(id => {
+          if (distances[id] < smallestDist) {
+            smallestDist = distances[id];
+            current = id;
+          }
+        });
+
+        if (current === null || current === endNodeId) break;
+        unvisited.delete(current);
+
+        graph[current].forEach(neighbor => {
+          if (unvisited.has(neighbor.to)) {
+            let alt = distances[current] + neighbor.weight;
+            if (alt < distances[neighbor.to]) {
+              distances[neighbor.to] = alt;
+              previous[neighbor.to] = current;
+            }
+          }
+        });
+      }
+
+      const pathIds = [];
+      let curr = endNodeId;
+      while (curr) {
+        pathIds.unshift(curr);
+        curr = previous[curr];
+      }
+
+      const segments = [];
+      for (let i = 0; i < pathIds.length - 1; i++) {
+        let u = pathIds[i], v = pathIds[i+1];
+        let edge = edges.find(e => (e.from === u && e.to === v) || (e.from === v && e.to === u));
+        segments.push(edge);
+      }
+
+      return {
+        distanceMeters: distances[endNodeId],
+        pathIds: pathIds,
+        segments: segments
+      };
+    }
+
+    // 生成單元三題目 (參考圖像佈局: 商場, 街市, 巴士總站, 公園, 安樂大廈, 健永大廈, 永年大廈)
+    function generateUnit3Questions() {
+      const qList = [];
+      const usedCombos = new Set();
+
+      const nodes = [
+        { id: 'mall',      icon: '🏢', nameZh: '商場',     nameEn: 'Shopping Mall', x: 80,  y: 60  },
+        { id: 'market',    icon: '🏪', nameZh: '街市',     nameEn: 'Market',        x: 230, y: 60  },
+        { id: 'bus',       icon: '🚏', nameZh: '巴士總站', nameEn: 'Bus Terminus',  x: 380, y: 60  },
+        { id: 'park',      icon: '🛝', nameZh: '公園',     nameEn: 'Park',          x: 130, y: 230 },
+        { id: 'anlok',     icon: '🏢', nameZh: '安樂大廈', nameEn: 'An Lok Bldg',   x: 420, y: 230 },
+        { id: 'kinwing',   icon: '🏦', nameZh: '健永大廈', nameEn: 'Kin Wing Bldg', x: 550, y: 140 },
+        { id: 'wingwing',  icon: '🏣', nameZh: '永年大廈', nameEn: 'Wing Nin Bldg', x: 620, y: 230 }
+      ];
+
+      const configs = [
+        { diff: 'primary', start: 'mall',    end: 'bus', targetUnit: '公里', targetUnitEn: 'km' },
+        { diff: 'primary', start: 'anlok',   end: 'wingwing', targetUnit: '公里', targetUnitEn: 'km' },
+        { diff: 'primary', start: 'bus',     end: 'kinwing', targetUnit: '公里', targetUnitEn: 'km' },
+        { diff: 'inter',   start: 'mall',    end: 'park', targetUnit: '公里', targetUnitEn: 'km' },
+        { diff: 'inter',   start: 'bus',     end: 'anlok', targetUnit: '公里', targetUnitEn: 'km' },
+        { diff: 'inter',   start: 'kinwing', end: 'wingwing', targetUnit: '公里', targetUnitEn: 'km' },
+        { diff: 'inter',   start: 'anlok',   end: 'kinwing', targetUnit: '米', targetUnitEn: 'm' },
+        { diff: 'adv',     start: 'park',    end: 'kinwing', targetUnit: '米', targetUnitEn: 'm' },
+        { diff: 'adv',     start: 'mall',    end: 'anlok', targetUnit: '公里', targetUnitEn: 'km' },
+        { diff: 'adv',     start: 'park',    end: 'wingwing', targetUnit: '公里', targetUnitEn: 'km' }
+      ];
+
+      configs.forEach((cfg) => {
+        let qObj = null;
+        while (!qObj) {
+          // 定義邊線與彎曲控制點 (Q cx cy)
+          const edgeDefs = [
+            { id: 'e1', from: 'mall',    to: 'market',   valM: 1000, labelZh: '1 km',   labelEn: '1 km',   cx: 155, cy: 50 },
+            { id: 'e2', from: 'market',  to: 'bus',      valM: 1000, labelZh: '1 km',   labelEn: '1 km',   cx: 305, cy: 70 },
+            { id: 'e3', from: 'mall',    to: 'park',     valM: 2000, labelZh: '2 km',   labelEn: '2 km',   cx: 80,  cy: 160 },
+            { id: 'e4', from: 'park',    to: 'anlok',    valM: 3000, labelZh: '3 km',   labelEn: '3 km',   cx: 275, cy: 240 },
+            { id: 'e5', from: 'bus',     to: 'anlok',    valM: 2000, labelZh: '2 km',   labelEn: '2 km',   cx: 380, cy: 150 },
+            { id: 'e6', from: 'bus',     to: 'kinwing',  valM: 2000, labelZh: '2 km',   labelEn: '2 km',   cx: 470, cy: 90 },
+            { id: 'e7', from: 'anlok',   to: 'kinwing',  valM: 750,  labelZh: '750 m',  labelEn: '750 m',  cx: 470, cy: 175 },
+            { id: 'e8', from: 'anlok',   to: 'wingwing', valM: 1000, labelZh: '1 km',   labelEn: '1 km',   cx: 520, cy: 240 },
+            { id: 'e9', from: 'kinwing', to: 'wingwing', valM: 1000, labelZh: '1 km',   labelEn: '1 km',   cx: 600, cy: 180 }
+          ];
+
+          const edges = edgeDefs.map(e => ({
+            id: e.id,
+            from: e.from,
+            to: e.to,
+            valInMeters: e.valM,
+            labelZh: e.labelZh,
+            labelEn: e.labelEn,
+            cx: e.cx,
+            cy: e.cy
+          }));
+
+          const sp = findShortestPath(nodes, edges, cfg.start, cfg.end);
+          const key = `${cfg.start}_${cfg.end}_${sp.distanceMeters}_${cfg.targetUnit}`;
+
+          let ansVal = sp.distanceMeters;
+          if (cfg.targetUnit === '公里') {
+            ansVal = sp.distanceMeters / 1000;
+          }
+
+          if (!usedCombos.has(key)) {
+            usedCombos.add(key);
+
+            let startNodeObj = nodes.find(n => n.id === cfg.start);
+            let endNodeObj = nodes.find(n => n.id === cfg.end);
+
+            qObj = {
+              type: 'measurement',
+              diff: cfg.diff,
+              nodes: nodes,
+              edges: edges,
+              startNodeObj: startNodeObj,
+              endNodeObj: endNodeObj,
+              ans: ansVal.toString(),
+              spData: sp,
+              targetUnit: cfg.targetUnit,
+              targetUnitEn: cfg.targetUnitEn
+            };
+          }
+        }
+        qList.push(qObj);
+      });
+
+      return qList;
+    }
+
+    function generateQuestions(mode) {
+      if (mode === 'km_to_m') {
+        return generateUnit1Questions();
+      } else if (mode === 'complex_to_single') {
+        return generateUnit2Questions();
+      } else if (mode === 'measurement') {
+        return generateUnit3Questions();
+      }
+      return [];
+    }
+
+    // 動態繪製卡通風格地圖 (SVG) - 包含綠色最短路徑標記及流光效果
+    function renderMeasurementSVG(q, highlightPath = false) {
+      const container = document.getElementById('measurement-area');
+      container.innerHTML = '';
+
+      const svgWidth = 680;
+      const svgHeight = 290;
+
+      // 提取最短路徑的邊線 ID 與 節點 ID
+      const highlightedEdgeIds = new Set();
+      const highlightedNodeIds = new Set();
+      if (highlightPath && q.spData) {
+        q.spData.segments.forEach(s => highlightedEdgeIds.add(s.id));
+        q.spData.pathIds.forEach(id => highlightedNodeIds.add(id));
+      }
+
+      let svgHtml = `<svg width="${svgWidth}" height="${svgHeight}" viewBox="0 0 ${svgWidth} ${svgHeight}" xmlns="http://www.w3.org/2000/svg">`;
+
+      svgHtml += `
+        <defs>
+          <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+            <feDropShadow dx="1" dy="2" stdDeviation="2" flood-color="#000000" flood-opacity="0.15"/>
+          </filter>
+        </defs>
+      `;
+
+      // 1. 繪製曲折路線 (Edges)
+      q.edges.forEach(e => {
+        let n1 = q.nodes.find(n => n.id === e.from);
+        let n2 = q.nodes.find(n => n.id === e.to);
+
+        const isHighlighted = highlightedEdgeIds.has(e.id);
+        const pathD = `M ${n1.x} ${n1.y} Q ${e.cx} ${e.cy} ${n2.x} ${n2.y}`;
+
+        // 底色外框 (高亮時為鮮綠色 #276749，一般為草綠色 #a2d182)
+        const outerStroke = isHighlighted ? "#276749" : "#a2d182";
+        const strokeW = isHighlighted ? "10" : "7";
+
+        svgHtml += `<path d="${pathD}" fill="none" stroke="${outerStroke}" stroke-width="${strokeW}" stroke-linecap="round" />`;
+        
+        // 如果需要高亮最短路徑，使用流動的白色/淡綠色虛線，吸引學生注意力
+        const dashedClass = isHighlighted ? "flowing-path" : "";
+        const dashStroke = isHighlighted ? "#c6f6d5" : "#ffffff";
+        svgHtml += `<path class="${dashedClass}" d="${pathD}" fill="none" stroke="${dashStroke}" stroke-width="3" stroke-linecap="round" />`;
+
+        // 計算二次貝茲曲線中點 (t=0.5) 及其切線/法線方向，將距離標籤位移，避開路徑
+        let midX = 0.25 * n1.x + 0.5 * e.cx + 0.25 * n2.x;
+        let midY = 0.25 * n1.y + 0.5 * e.cy + 0.25 * n2.y;
+
+        // 計算切線向量 (Tangent Vector) 及法線向量 (Normal Vector)
+        let dx = n2.x - n1.x;
+        let dy = n2.y - n1.y;
+        let len = Math.sqrt(dx * dx + dy * dy);
+        let nx = -dy / (len || 1);
+        let ny = dx / (len || 1);
+
+        // 垂直偏移距離 22px，使數字完全離開店路線路徑
+        let offset = 22;
+        let labelX = midX + nx * offset;
+        let labelY = midY + ny * offset;
+
+        const displayLabel = currentLang === 'zh' ? e.labelZh : e.labelEn;
+        const badgeBg = isHighlighted ? "#c8e6c9" : "#fff9db";
+        const badgeBorder = isHighlighted ? "#2e7d32" : "#f6e05e";
+        const textColor = isHighlighted ? "#1b5e20" : "#744210";
+
+        svgHtml += `
+          <g filter="url(#shadow)">
+            <rect x="${labelX - 35}" y="${labelY - 11}" width="70" height="22" rx="11" fill="${badgeBg}" stroke="${badgeBorder}" stroke-width="${isHighlighted ? '2' : '1.5'}"/>
+            <text x="${labelX}" y="${labelY + 4}" font-size="11" font-weight="bold" fill="${textColor}" text-anchor="middle">${displayLabel}</text>
+          </g>
+        `;
+      });
+
+      // 2. 繪製地點卡片 (Nodes)
+      q.nodes.forEach(n => {
+        let isStart = (n.id === q.startNodeObj.id);
+        let isEnd = (n.id === q.endNodeObj.id);
+        let isPassed = highlightedNodeIds.has(n.id);
+
+        let strokeColor = "#cbd5e0";
+        let cardBg = "#ffffff";
+
+        if (isStart) { strokeColor = "#e53e3e"; cardBg = "#fff5f5"; }
+        else if (isEnd) { strokeColor = "#38a169"; cardBg = "#f0fff4"; }
+        else if (isPassed && highlightPath) { strokeColor = "#2e7d32"; cardBg = "#e8f5e9"; }
+
+        const locName = currentLang === 'zh' ? n.nameZh : n.nameEn;
+
+        svgHtml += `
+          <g filter="url(#shadow)">
+            <rect x="${n.x - 38}" y="${n.y - 25}" width="76" height="50" rx="10" fill="${cardBg}" stroke="${strokeColor}" stroke-width="${isStart || isEnd || isPassed ? '3' : '1.5'}" />
+            <text x="${n.x}" y="${n.y - 3}" font-size="20" text-anchor="middle">${n.icon}</text>
+            <text x="${n.x}" y="${n.y + 17}" font-size="11" font-weight="bold" fill="#2d3748" text-anchor="middle">${locName}</text>
+          </g>
+        `;
+
+        // 起點/終點頂部標籤
+        if (isStart) {
+          svgHtml += `
+            <rect x="${n.x - 22}" y="${n.y - 39}" width="44" height="16" rx="8" fill="#e53e3e"/>
+            <text x="${n.x}" y="${n.y - 27}" font-size="10" font-weight="bold" fill="#ffffff" text-anchor="middle">${currentLang === 'zh' ? '起點' : 'Start'}</text>
+          `;
+        }
+        if (isEnd) {
+          svgHtml += `
+            <rect x="${n.x - 22}" y="${n.y - 39}" width="44" height="16" rx="8" fill="#38a169"/>
+            <text x="${n.x}" y="${n.y - 27}" font-size="10" font-weight="bold" fill="#ffffff" text-anchor="middle">${currentLang === 'zh' ? '終點' : 'End'}</text>
+          `;
+        }
+      });
+
+      svgHtml += `</svg>`;
+      container.innerHTML = svgHtml;
+    }
+
+    function startQuiz(mode) {
+      currentMode = mode;
+      questions = generateQuestions(mode);
+      currentQIndex = 0;
+      records = [];
+      startTimeObj = new Date();
+
+      document.getElementById('page-home').classList.add('hidden');
+      document.getElementById('page-report').classList.add('hidden');
+      document.getElementById('page-quiz').classList.remove('hidden');
+      document.getElementById('lang-toggle-btn').classList.add('hidden');
+
+      loadQuestion();
+    }
+
+    function loadQuestion() {
+      wrongAttempts = 0;
+      document.getElementById('feedback-area').classList.add('hidden');
+      document.getElementById('feedback-area').innerHTML = '';
+
+      const input = document.getElementById('answer-input');
+      input.value = '';
+      input.disabled = false;
+      input.classList.remove('input-correct', 'input-wrong');
+
+      updateQuestionDisplay();
+
+      document.getElementById('btn-submit').classList.remove('hidden');
+      document.getElementById('btn-next').classList.add('hidden');
+
+      setTimeout(() => {
+        input.focus();
+      }, 100);
+    }
+
+    function updateQuestionDisplay() {
+      const t = i18n[currentLang];
+      const q = questions[currentQIndex];
+
+      let modeName = t.unit1;
+      if (currentMode === 'complex_to_single') modeName = t.unit2;
+      else if (currentMode === 'measurement') modeName = t.unit3;
+
+      document.getElementById('quiz-mode-name').innerText = modeName;
+      document.getElementById('quiz-progress-text').innerText = `${t.qProgress} ${currentQIndex + 1} / ${questions.length}`;
+
+      const diffTag = document.getElementById('quiz-diff-tag');
+      if (q.diff === 'primary') {
+        diffTag.innerText = t.diffPrimary;
+        diffTag.className = 'diff-tag diff-primary';
+      } else if (q.diff === 'inter') {
+        diffTag.innerText = t.diffInter;
+        diffTag.className = 'diff-tag diff-inter';
+      } else {
+        diffTag.innerText = t.diffAdv;
+        diffTag.className = 'diff-tag diff-adv';
+      }
+
+      const measureArea = document.getElementById('measurement-area');
+      measureArea.classList.remove('highlight-glow');
+
+      if (q.type === 'measurement') {
+        measureArea.classList.remove('hidden');
+        renderMeasurementSVG(q, false);
+
+        const unitStr = currentLang === 'zh' ? q.targetUnit : q.targetUnitEn;
+        const startName = currentLang === 'zh' ? q.startNodeObj.nameZh : q.startNodeObj.nameEn;
+        const endName = currentLang === 'zh' ? q.endNodeObj.nameZh : q.endNodeObj.nameEn;
+
+        const qTitleText = t.shortestPathQ.replace('{start}', `${q.startNodeObj.icon} ${startName}`)
+                                           .replace('{end}', `${q.endNodeObj.icon} ${endName}`)
+                                           .replace('{unit}', unitStr);
+
+        document.getElementById('equation-prefix').innerText = qTitleText;
+        document.getElementById('unit-label').innerText = unitStr;
+      } else {
+        measureArea.classList.add('hidden');
+
+        let exprStr = '';
+        let unitLabel = '';
+
+        if (q.type === 'km_to_m') {
+          exprStr = currentLang === 'zh' ? `${q.rawNum} 公里 = ` : `${q.rawNum} km = `;
+          unitLabel = currentLang === 'zh' ? '米' : 'm';
+        } else if (q.type === 'm_to_km') {
+          exprStr = currentLang === 'zh' ? `${q.rawNum} 米 = ` : `${q.rawNum} m = `;
+          unitLabel = currentLang === 'zh' ? '公里' : 'km';
+        } else if (q.type === 'complex_to_single') {
+          exprStr = currentLang === 'zh' ? `${q.kmVal} 公里 ${q.mVal} 米 = ` : `${q.kmVal} km ${q.mVal} m = `;
+          unitLabel = currentLang === 'zh' ? '米' : 'm';
+        }
+
+        document.getElementById('equation-prefix').innerText = exprStr;
+        document.getElementById('unit-label').innerText = unitLabel;
+      }
+
+      document.getElementById('btn-next').innerText = t.nextBtn;
+      document.getElementById('btn-submit').innerText = t.submitBtn;
+    }
+
+    // 觸發綠色最短路徑高亮與發光脈衝吸引效果（取消搖一搖）
+    function triggerMapHighlight(q) {
+      const area = document.getElementById('measurement-area');
+      renderMeasurementSVG(q, true);
+      area.classList.add('highlight-glow');
+    }
+
+    function generateVisualDiagram(q) {
+      const t = i18n[currentLang];
+      const unitStr = currentLang === 'zh' ? q.targetUnit : q.targetUnitEn;
+
+      if (q.type === 'measurement') {
+        const isZh = currentLang === 'zh';
+        const startName = isZh ? `${q.startNodeObj.icon} ${q.startNodeObj.nameZh}` : `${q.startNodeObj.icon} ${q.startNodeObj.nameEn}`;
+        const endName = isZh ? `${q.endNodeObj.icon} ${q.endNodeObj.nameZh}` : `${q.endNodeObj.icon} ${q.endNodeObj.nameEn}`;
+
+        const pathStr = q.spData.pathIds.map(id => {
+          let n = q.nodes.find(x => x.id === id);
+          return isZh ? `${n.icon} ${n.nameZh}` : `${n.icon} ${n.nameEn}`;
+        }).join(" ➔ ");
+
+        const calcParts = q.spData.segments.map(s => isZh ? s.labelZh : s.labelEn);
+        const calcExpr = calcParts.join(" + ");
+
+        const detailHtml = t.diagramMeasureDetail.replace(/{start}/g, startName)
+                                                 .replace(/{end}/g, endName)
+                                                 .replace(/{path}/g, pathStr)
+                                                 .replace(/{calc}/g, calcExpr)
+                                                 .replace(/{ans}/g, q.ans)
+                                                 .replace(/{unit}/g, unitStr);
+        return `
+          <div class="visual-diagram-container">
+            <div style="font-weight: bold; color: #2b6cb0; margin-bottom: 8px;">${t.diagramTitle}</div>
+            <div style="font-size: 1rem; color: #2d3748; text-align: left; width: 100%; line-height: 1.8;">
+              ${detailHtml}
+            </div>
+          </div>
+        `;
+      }
+
+      let topBraceText = '';
+      let bottomBraceText = '';
+      let columnsHtml = '';
+
+      if (q.type === 'km_to_m') {
+        const count = q.rawNum;
+        topBraceText = currentLang === 'zh' ? `${count} 公里` : `${count} km`;
+        bottomBraceText = t.howManyM;
+
+        let displayCount = count;
+        let isTruncated = false;
+        if (count > 4) {
+          displayCount = 3; 
+          isTruncated = true;
+        }
+
+        for (let i = 0; i < displayCount; i++) {
+          columnsHtml += `
+            <div class="diagram-column">
+              <div class="diagram-cell-top">1 km</div>
+              <div class="diagram-cell-bottom">1000 m</div>
+            </div>
+          `;
+        }
+
+        if (isTruncated) {
+          columnsHtml += `<div class="diagram-column" style="justify-content: center; align-items: center; padding: 0 10px; font-weight: bold; background: #edf2f7;">...</div>`;
+        }
+      } else if (q.type === 'm_to_km') {
+        const kmVal = parseInt(q.ans);
+        topBraceText = currentLang === 'zh' ? `${q.rawNum} 米` : `${q.rawNum} m`;
+        bottomBraceText = t.howManyKm;
+
+        let displayCount = kmVal;
+        let isTruncated = false;
+        if (kmVal > 4) {
+          displayCount = 3;
+          isTruncated = true;
+        }
+
+        for (let i = 0; i < displayCount; i++) {
+          columnsHtml += `
+            <div class="diagram-column">
+              <div class="diagram-cell-top" style="background-color:#fbe389;">1000 m</div>
+              <div class="diagram-cell-bottom" style="background-color:#f4a2a1;">1 km</div>
+            </div>
+          `;
+        }
+
+        if (isTruncated) {
+          columnsHtml += `<div class="diagram-column" style="justify-content: center; align-items: center; padding: 0 10px; font-weight: bold; background: #edf2f7;">...</div>`;
+        }
+      } else if (q.type === 'complex_to_single') {
+        topBraceText = currentLang === 'zh' ? `${q.kmVal} 公里 ${q.mVal} 米` : `${q.kmVal} km ${q.mVal} m`;
+        bottomBraceText = t.howManyM;
+
+        let displayCount = q.kmVal;
+        let isTruncated = false;
+        if (q.kmVal > 4) {
+          displayCount = 3;
+          isTruncated = true;
+        }
+
+        for (let i = 0; i < displayCount; i++) {
+          columnsHtml += `
+            <div class="diagram-column">
+              <div class="diagram-cell-top">1 km</div>
+              <div class="diagram-cell-bottom">1000 m</div>
+            </div>
+          `;
+        }
+
+        if (isTruncated) {
+          columnsHtml += `<div class="diagram-column" style="justify-content: center; align-items: center; padding: 0 8px; font-weight: bold; background: #edf2f7;">...</div>`;
+        }
+
+        const mCellText = currentLang === 'zh' ? `${q.mVal} 米` : `${q.mVal} m`;
+        columnsHtml += `
+          <div class="diagram-column">
+            <div class="diagram-cell-top">${mCellText}</div>
+            <div class="diagram-cell-bottom">${mCellText}</div>
+          </div>
+        `;
+      }
+
+      return `
+        <div class="visual-diagram-container">
+          <div style="font-weight: bold; color: #2b6cb0; margin-bottom: 8px;">${t.diagramTitle}</div>
+          <div class="diagram-brace-top">⏞<br>${topBraceText}</div>
+          <div class="diagram-table">${columnsHtml}</div>
+          <div class="diagram-brace-bottom">⏟<br><span style="color:#e53e3e; font-size:1.1rem;">${bottomBraceText}</span></div>
+        </div>
+      `;
+    }
+
+    function checkAnswer() {
+      const q = questions[currentQIndex];
+      const t = i18n[currentLang];
+      const feedback = document.getElementById('feedback-area');
+      const input = document.getElementById('answer-input');
+
+      const valStr = input.value.trim();
+      if (valStr === '') return;
+
+      const userNum = parseFloat(valStr);
+      const targetNum = parseFloat(q.ans);
+      const isExactMatch = (Math.abs(userNum - targetNum) < 0.001);
+
+      if (!records[currentQIndex]) {
+        records[currentQIndex] = {
+          qIndex: currentQIndex + 1,
+          questionObj: q,
+          targetAns: q.ans,
+          userFirstWrong: null,
+          isCorrectOnFirstTry: false,
+          solved: false
+        };
+      }
+
+      if (isExactMatch) {
+        if (wrongAttempts === 0) {
+          records[currentQIndex].isCorrectOnFirstTry = true;
+        }
+        records[currentQIndex].solved = true;
+
+        input.classList.remove('input-wrong');
+        input.classList.add('input-correct');
+        input.disabled = true;
+
+        // 答對時：用綠色標記最短路徑並套用吸引效果
+        if (q.type === 'measurement') {
+          triggerMapHighlight(q);
+        }
+
+        const randomPraise = t.praise[Math.floor(Math.random() * t.praise.length)];
+        feedback.className = "feedback-box feedback-success";
+        feedback.innerHTML = `<strong>${randomPraise}</strong>`;
+        feedback.classList.remove('hidden');
+
+        document.getElementById('btn-submit').classList.add('hidden');
+        document.getElementById('btn-next').classList.remove('hidden');
+        document.getElementById('btn-next').focus();
+
+      } else {
+        wrongAttempts++;
+        if (records[currentQIndex].userFirstWrong === null) {
+          records[currentQIndex].userFirstWrong = valStr;
+        }
+
+        input.classList.remove('input-correct', 'input-wrong');
+        void input.offsetWidth;
+        input.classList.add('input-wrong');
+
+        if (wrongAttempts < 3) {
+          const randomEnc = t.encourage[Math.floor(Math.random() * t.encourage.length)];
+          let hintText = t.hintKmToM;
+          if (q.type === 'm_to_km') hintText = t.hintMToKm;
+          else if (q.type === 'complex_to_single') hintText = t.hintComplex;
+          else if (q.type === 'measurement') hintText = t.hintMeasure;
+
+          feedback.className = "feedback-box feedback-warning";
+          feedback.innerHTML = `
+            <div><strong>${randomEnc}</strong></div>
+            <div style="margin-top:6px; font-size:0.95rem; color:#744210;">${hintText}</div>
+          `;
+          feedback.classList.remove('hidden');
+
+          setTimeout(() => {
+            input.value = '';
+            input.classList.remove('input-wrong');
+            input.focus();
+          }, 600);
+
+        } else {
+          // 第三次答錯時：用綠色標記最短路徑並套用吸引效果
+          if (q.type === 'measurement') {
+            triggerMapHighlight(q);
+          }
+
+          feedback.className = "feedback-box feedback-danger";
+          let stepHtml = "";
+          const unitStr = currentLang === 'zh' ? q.targetUnit : q.targetUnitEn;
+
+          if (q.type === 'measurement') {
+            const isZh = currentLang === 'zh';
+            const pathStr = q.spData.pathIds.map(id => {
+              let n = q.nodes.find(x => x.id === id);
+              return isZh ? `${n.icon}${n.nameZh}` : `${n.icon}${n.nameEn}`;
+            }).join(" ➔ ");
+
+            const calcExpr = q.spData.segments.map(s => isZh ? s.labelZh : s.labelEn).join(" + ");
+
+            stepHtml = t.stepMeasure.replace(/{path}/g, pathStr)
+                                    .replace(/{calc}/g, calcExpr)
+                                    .replace(/{ans}/g, q.ans)
+                                    .replace(/{unit}/g, unitStr);
+          } else if (q.type === 'km_to_m') {
+            stepHtml = t.stepKmToM.replace(/{num}/g, q.rawNum).replace(/{ans}/g, q.ans);
+          } else if (q.type === 'm_to_km') {
+            stepHtml = t.stepMToKm.replace(/{num}/g, q.rawNum).replace(/{ans}/g, q.ans);
+          } else {
+            stepHtml = t.stepComplex.replace(/{km}/g, q.kmVal)
+                                    .replace(/{kmVal}/g, q.kmVal * 1000)
+                                    .replace(/{m}/g, q.mVal)
+                                    .replace(/{ans}/g, q.ans);
+          }
+
+          const visualDiagramHtml = generateVisualDiagram(q);
+
+          feedback.innerHTML = `
+            <div style="font-size:0.95rem; line-height:1.6;">
+              <strong>${t.stepTitle}</strong><br>
+              ${stepHtml}
+            </div>
+            ${visualDiagramHtml}
+          `;
+          feedback.classList.remove('hidden');
+
+          input.disabled = true;
+          document.getElementById('btn-submit').classList.add('hidden');
+          document.getElementById('btn-next').classList.remove('hidden');
+          document.getElementById('btn-next').focus();
+        }
+      }
+    }
+
+    function nextQuestion() {
+      currentQIndex++;
+      if (currentQIndex < questions.length) {
+        loadQuestion();
+      } else {
+        showReport();
+      }
+    }
+
+    function formatDate(d) {
+      const pad = (n) => n.toString().padStart(2, '0');
+      return `${pad(d.getDate())}/${pad(d.getMonth()+1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+    }
+
+    function formatDuration(start, end) {
+      const diffInSeconds = Math.max(0, Math.floor((end - start) / 1000));
+      const mins = Math.floor(diffInSeconds / 60);
+      const secs = diffInSeconds % 60;
+
+      if (currentLang === 'en') {
+        if (mins > 0) return `${mins} min ${secs} sec`;
+        return `${secs} sec`;
+      } else {
+        if (mins > 0) return `${mins}分鐘${String(secs).padStart(2, '0')}秒`;
+        return `${secs}秒`;
+      }
+    }
+
+    function getQuestionTitleText(q) {
+      const isZh = currentLang === 'zh';
+      if (q.type === 'measurement') {
+        const startName = isZh ? `${q.startNodeObj.icon}${q.startNodeObj.nameZh}` : `${q.startNodeObj.icon}${q.startNodeObj.nameEn}`;
+        const endName = isZh ? `${q.endNodeObj.icon}${q.endNodeObj.nameZh}` : `${q.endNodeObj.icon}${q.endNodeObj.nameEn}`;
+        return `${startName} ➔ ${endName} (最短路徑)`;
+      } else if (q.type === 'km_to_m') {
+        const u1 = isZh ? '公里' : 'km';
+        const u2 = isZh ? '米' : 'm';
+        return `${q.rawNum} ${u1} = ____ ${u2}`;
+      } else if (q.type === 'm_to_km') {
+        const u1 = isZh ? '米' : 'm';
+        const u2 = isZh ? '公里' : 'km';
+        return `${q.rawNum} ${u1} = ____ ${u2}`;
+      } else {
+        if (isZh) {
+          return `${q.kmVal} 公里 ${q.mVal} 米 = ____ 米`;
+        }
+        return `${q.kmVal} km ${q.mVal} m = ____ m`;
+      }
+    }
+
+    function showReport() {
+      const endTimeObj = new Date();
+      const t = i18n[currentLang];
+
+      document.getElementById('page-quiz').classList.add('hidden');
+      document.getElementById('page-report').classList.remove('hidden');
+      document.getElementById('lang-toggle-btn').classList.add('hidden');
+
+      document.getElementById('report-main-title').innerText = t.reportTitle;
+      document.getElementById('lbl-start-time').innerText = t.startTime;
+      document.getElementById('lbl-end-time').innerText = t.endTime;
+      document.getElementById('lbl-duration').innerText = t.durationTime;
+      document.getElementById('lbl-total-correct').innerText = t.totalCorrect;
+      document.getElementById('lbl-accuracy').innerText = t.accuracy;
+      document.getElementById('lbl-mastery-title').innerText = t.masteryTitle;
+      document.getElementById('lbl-correct-title').innerText = t.correctTitle;
+      document.getElementById('lbl-wrong-title').innerText = t.wrongTitle;
+
+      document.getElementById('lbl-btn-download').innerText = t.btnDownload;
+      document.getElementById('lbl-btn-retry').innerText = t.btnRetry;
+      document.getElementById('lbl-btn-home').innerText = t.btnHome;
+
+      document.getElementById('val-start-time').innerText = formatDate(startTimeObj);
+      document.getElementById('val-end-time').innerText = formatDate(endTimeObj);
+      document.getElementById('val-duration').innerText = formatDuration(startTimeObj, endTimeObj);
+
+      let correctCount = 0;
+      records.forEach(r => {
+        if (r.isCorrectOnFirstTry) correctCount++;
+      });
+
+      const total = records.length;
+      const accuracyPct = Math.round((correctCount / total) * 100);
+
+      document.getElementById('val-correct-count').innerText = `${correctCount} / ${total}`;
+      document.getElementById('val-accuracy').innerText = `${accuracyPct}%`;
+
+      let modeName = t.unit1;
+      if (currentMode === 'complex_to_single') modeName = t.unit2;
+      else if (currentMode === 'measurement') modeName = t.unit3;
+
+      document.getElementById('report-unit-name').innerText = `1. ${modeName}`;
+      document.getElementById('val-unit-mastery').innerText = `${correctCount} / ${total} (${accuracyPct}%)`;
+
+      const correctContainer = document.getElementById('correct-list-container');
+      correctContainer.innerHTML = '';
+      const correctItems = records.filter(r => r.isCorrectOnFirstTry);
+
+      if (correctItems.length === 0) {
+        correctContainer.innerHTML = `<div style="font-size:0.95rem; color:#718096; padding-left:5px;">${t.noCorrect}</div>`;
+      } else {
+        correctItems.forEach(item => {
+          const qText = t.questionLabel.replace('{n}', item.qIndex);
+          const qExprText = getQuestionTitleText(item.questionObj);
+          const unitStr = currentLang === 'zh' ? item.questionObj.targetUnit : item.questionObj.targetUnitEn;
+          const itemDiv = document.createElement('div');
+          itemDiv.className = 'item-card-correct';
+          itemDiv.innerHTML = `
+            <div class="item-q-title">${qText} : ${qExprText}</div>
+            <div class="item-ans-text">${t.ansLabel} : ${item.targetAns} ${unitStr}</div>
+          `;
+          correctContainer.appendChild(itemDiv);
+        });
+      }
+
+      const wrongContainer = document.getElementById('wrong-list-container');
+      wrongContainer.innerHTML = '';
+      const wrongItems = records.filter(r => !r.isCorrectOnFirstTry);
+
+      if (wrongItems.length === 0) {
+        wrongContainer.innerHTML = `<div style="font-size:0.95rem; color:#38a169; padding-left:5px;">${t.noWrong}</div>`;
+      } else {
+        wrongItems.forEach(item => {
+          const qText = t.questionLabel.replace('{n}', item.qIndex);
+          const qExprText = getQuestionTitleText(item.questionObj);
+          const userAnsDisplay = item.userFirstWrong !== null ? item.userFirstWrong : '-';
+          const unitStr = currentLang === 'zh' ? item.questionObj.targetUnit : item.questionObj.targetUnitEn;
+          const itemDiv = document.createElement('div');
+          itemDiv.className = 'item-card-wrong';
+          itemDiv.innerHTML = `
+            <div class="item-q-title">${qText} : ${qExprText}</div>
+            <div class="item-ans-text">${t.yourAnsLabel} : ${userAnsDisplay} | ${t.correctAnsLabel} : ${item.targetAns} ${unitStr}</div>
+          `;
+          wrongContainer.appendChild(itemDiv);
+        });
+      }
+    }
+
+    function downloadReportImage() {
+      const element = document.getElementById('report-card-to-capture');
+      if (!element) return;
+
+      html2canvas(element, {
+        scale: 2,
+        backgroundColor: '#ffffff',
+        useCORS: true
+      }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = `Kilometre_Report_${new Date().toISOString().slice(0,10)}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      }).catch(err => {
+        alert("圖片下載失敗，請稍微重試：" + err);
+      });
+    }
+
+    function openModal(title, msg, cancelTxt, confirmTxt, onConfirm) {
+      document.getElementById('modal-title').innerText = title;
+      document.getElementById('modal-msg').innerText = msg;
+      document.getElementById('modal-cancel-btn').innerText = cancelTxt;
+      document.getElementById('modal-confirm-btn').innerText = confirmTxt;
+      modalActionCallback = onConfirm;
+      document.getElementById('custom-modal').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('custom-modal').classList.remove('active');
+    }
+
+    function confirmModalAction() {
+      closeModal();
+      if (modalActionCallback) modalActionCallback();
+    }
+
+    function askReturnHome() {
+      const t = i18n[currentLang];
+      openModal(
+        t.modalReturnTitle,
+        t.modalReturnMsg,
+        t.modalCancel || 'Cancel',
+        t.modalStart || 'Confirm',
+        goHome
+      );
+    }
+
+    function retryPractice() {
+      startQuiz(currentMode || 'km_to_m');
+    }
+
+    function goHome() {
+      document.getElementById('page-quiz').classList.add('hidden');
+      document.getElementById('page-report').classList.add('hidden');
+      document.getElementById('page-home').classList.remove('hidden');
+      document.getElementById('lang-toggle-btn').classList.remove('hidden');
+    }
+  </script>
+
+  <!-- 自動包含的修復腳本 -->
+  <script src="https://mathteacher1618.github.io/my_fixes/ipad_fix.js"></script>
+</body>
+</html>
