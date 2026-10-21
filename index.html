@@ -116,15 +116,8 @@
       line-height: 1.5;
     }
 
-    .card-center {
-      grid-column: 1 / -1;
-      justify-self: center;
-      width: 50%;
-    }
-
     @media (max-width: 600px) {
       .menu-grid { grid-template-columns: 1fr; }
-      .card-center { grid-column: auto; width: 100%; }
     }
 
     /* 練習界面 */
@@ -222,7 +215,6 @@
       display: block;
     }
 
-    /* 替代搖晃的效果：高亮吸引動畫 */
     .highlight-glow {
       border-color: #38a169 !important;
       box-shadow: 0 0 20px rgba(56, 161, 105, 0.4) !important;
@@ -234,7 +226,6 @@
       100% { box-shadow: 0 0 25px rgba(56, 161, 105, 0.7); }
     }
 
-    /* 虛線流動動畫（最短路徑吸引動畫） */
     .flowing-path {
       stroke-dasharray: 8, 5;
       animation: dashFlow 1s linear infinite;
@@ -298,6 +289,52 @@
       40%, 80% { transform: translateX(6px); }
     }
 
+    /* 單元四單位選擇按鈕樣式 */
+    .unit-options-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      width: 100%;
+      margin-top: 20px;
+    }
+
+    .unit-opt-btn {
+      background-color: #ffffff;
+      border: 2px solid #cbd5e0;
+      border-radius: 12px;
+      padding: 16px 12px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #2d3748;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      min-height: 56px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+    }
+
+    .unit-opt-btn:hover:not(:disabled) {
+      background-color: #ebf8ff;
+      border-color: #3182ce;
+      color: #2b6cb0;
+      transform: translateY(-2px);
+    }
+
+    .unit-opt-btn.correct-choice {
+      background-color: #38a169 !important;
+      border-color: #2f855a !important;
+      color: white !important;
+      box-shadow: 0 0 12px rgba(56, 161, 105, 0.4);
+    }
+
+    .unit-opt-btn.wrong-choice {
+      background-color: #e53e3e !important;
+      border-color: #c53030 !important;
+      color: white !important;
+      animation: shake 0.5s ease-in-out;
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
     .btn {
       display: inline-block;
       width: 100%;
@@ -336,7 +373,7 @@
     .feedback-warning { background-color: #feebc8; color: #744210; border: 1px solid #fbd38d; }
     .feedback-danger { background-color: #fff5f5; color: #742a2a; border: 1px solid #feb2b2; }
 
-    /* 圖像化拆解圖表 */
+    /* 圖像化拆解圖表 (用於單元一至三) */
     .visual-diagram-container {
       margin-top: 15px;
       background: #ffffff;
@@ -486,9 +523,14 @@
             <h3 id="opt2-title">複名數 → 單名數</h3>
             <p id="desc-opt2">將複合單位（公里和米）轉換為單一單位（米），例如：3 公里 45 米 = 3045 米。</p>
           </div>
-          <div class="card card-center" onclick="startQuiz('measurement')">
+          <div class="card" onclick="startQuiz('measurement')">
             <h3 id="opt3-title">最短路徑</h3>
             <p id="desc-opt3">觀察可愛的地圖路線圖，找出由起點至終點的最短路徑距離！</p>
+          </div>
+          <!-- 單元四：量度單位 -->
+          <div class="card" onclick="startQuiz('unit_selection')">
+            <h3 id="opt4-title">量度單位</h3>
+            <p id="desc-opt4">選擇合適的長度單位（毫米 mm、厘米 cm、米 m、公里 km）填寫在生活中各種物體的測量情境中。</p>
           </div>
         </div>
       </div>
@@ -503,7 +545,7 @@
           <div class="quiz-card">
             <div class="quiz-header">
               <div>
-                <span id="quiz-mode-name" class="unit-tag">最短路徑</span>
+                <span id="quiz-mode-name" class="unit-tag">量度單位</span>
                 <span id="quiz-diff-tag" class="diff-tag diff-primary">初階</span>
               </div>
               <span id="quiz-progress-text" class="quiz-progress">題目 1 / 10</span>
@@ -512,7 +554,7 @@
             <!-- 單元三 SVG 卡通地圖容器 -->
             <div id="measurement-area" class="measurement-display hidden"></div>
 
-            <!-- 算式表達區 -->
+            <!-- 算式與題目表達區 -->
             <div class="equation">
               <span id="equation-prefix"></span>
               
@@ -523,7 +565,17 @@
               <span id="unit-label">公里</span>
             </div>
 
-            <div id="action-area">
+            <!-- 單元四 單位選擇區域（直接按鈕答題） -->
+            <div id="unit-options-area" class="hidden">
+              <div class="unit-options-grid">
+                <button class="unit-opt-btn" id="opt-mm" onclick="chooseUnit('毫米', 'mm', this)">毫米 (mm)</button>
+                <button class="unit-opt-btn" id="opt-cm" onclick="chooseUnit('厘米', 'cm', this)">厘米 (cm)</button>
+                <button class="unit-opt-btn" id="opt-m" onclick="chooseUnit('米', 'm', this)">米 (m)</button>
+                <button class="unit-opt-btn" id="opt-km" onclick="chooseUnit('公里', 'km', this)">公里 (km)</button>
+              </div>
+            </div>
+
+            <div id="action-area" style="margin-top: 20px;">
               <button id="btn-submit" class="btn btn-primary" onclick="checkAnswer()">提交答案</button>
               <button id="btn-next" class="btn btn-success hidden" onclick="nextQuestion()">再答一題 ➔</button>
             </div>
@@ -567,7 +619,7 @@
           <div class="section-label" id="lbl-mastery-title">各主題掌握度分析</div>
           <div class="report-section">
             <div class="report-row">
-              <span id="report-unit-name">1. 最短路徑</span>
+              <span id="report-unit-name">1. 量度單位</span>
               <span id="val-unit-mastery" class="report-val">0 / 10 (0%)</span>
             </div>
           </div>
@@ -621,9 +673,12 @@
         descOpt2: "將複合單位（公里和米）轉換為單一單位（米），例如：3 公里 45 米 = 3045 米。",
         opt3Title: "最短路徑",
         descOpt3: "觀察可愛的地圖路線圖，找出由起點至終點的最短路徑距離！",
+        opt4Title: "量度單位",
+        descOpt4: "選擇合適的長度單位（毫米 mm、厘米 cm、米 m、公里 km）填寫在生活中各種物體的測量情境中。",
         unit1: "公里 ↔ 米",
         unit2: "複名數 → 單名數",
         unit3: "最短路徑",
+        unit4: "量度單位",
         diffPrimary: "初階",
         diffInter: "中階",
         diffAdv: "高階",
@@ -638,13 +693,14 @@
         nextBtn: "再答一題 ➔",
         unitM: "米",
         unitKm: "公里",
-        praise: ["太棒了！答對了！🌟", "非常優秀，計算得很精確！👏", "答對了！繼續保持！🎉", "真聰明！完全掌握了最短路徑計算！💪"],
-        encourage: ["再試一次！比較一下各條可能路線的總長度！", "沒關係，重新計算看看，你可以的！", "加油！仔細把沿途路線的距離加起來！"],
+        praise: ["太棒了！答對了！🌟", "非常優秀，概念非常清晰！👏", "答對了！繼續保持！🎉", "真聰明！完全掌握了長度單位！💪"],
+        encourage: ["再試一次！思考一下測量物體的大小與遠近！", "沒關係，重新想想合適的單位，你可以的！", "加油！選擇最符合生活常識的長度單位！"],
         hintKmToM: "解題思路：1 公里 (km) = 1000 米 (m)，將公里數乘以 1000 即可。",
         hintComplex: "解題思路：先將公里部分乘以 1000 化為米，加上剩餘的米數。",
         hintMToKm: "解題思路：1000 米 (m) = 1 公里 (km)，將米數除以 1000 即可。",
         hintMeasure: "解題思路：找出由起點至終點的所有可能路徑，計算並比較哪一條路線總距離最短。",
-        stepTitle: "完整解題過程與圖像化拆解：",
+        hintUnitSelection: "解題思路：極微小厚度用毫米(mm)，日常物件用厘米(cm)，高度或建築用米(m)，遠距離/交通路線用公里(km)。",
+        stepTitle: "完整解題過程與分析：",
         stepKmToM: `
           1. 記住長度單位公式：<strong>1 km = 1000 m</strong>。<br>
           2. 計算：<strong>{num} × 1000</strong> = <strong>{ans}</strong>。<br>
@@ -664,6 +720,15 @@
           1. 最短路徑為：<strong>{path}</strong>。<br>
           2. 路線距離計算：<strong>{calc}</strong>。<br>
           3. 得出最短距離為：<strong style="color:#e53e3e; font-size:1.2rem;">{ans} {unit}</strong>
+        `,
+        stepUnitSelection: `
+          1. 物體/情境分析：<strong>{desc}</strong>。<br>
+          2. 單位比較與思考：<br>
+             • <strong>毫米 (mm)</strong>：非常薄/微小長度（如鑰匙厚度、郵票厚度）。<br>
+             • <strong>厘米 (cm)</strong>：文具、手持物品（如文具盒、鞋子長度）。<br>
+             • <strong>米 (m)</strong>：建築物高度、跑道、樓高（如山高、樓房）。<br>
+             • <strong>公里 (km)</strong>：城市間距離、長跑比賽、高速公路等。<br>
+          3. 得出最適合的單位為：<strong style="color:#e53e3e; font-size:1.2rem;">{ansZh} ({ansEn})</strong>
         `,
         diagramMeasureDetail: `
           • 起點：<strong>{start}</strong>，終點：<strong>{end}</strong><br>
@@ -703,9 +768,12 @@
         descOpt2: "Convert compound units (km & m) into a single unit (m). e.g., 3 km 45 m = 3045 m.",
         opt3Title: "Shortest Path",
         descOpt3: "Observe the cute map graph and find the shortest path between two places!",
+        opt4Title: "Units of Length",
+        descOpt4: "Choose appropriate units (mm, cm, m, km) for measuring everyday objects and distances.",
         unit1: "km ↔ m",
         unit2: "Compound → Single Unit",
         unit3: "Shortest Path",
+        unit4: "Units of Length",
         diffPrimary: "Basic",
         diffInter: "Inter",
         diffAdv: "Adv",
@@ -720,13 +788,14 @@
         nextBtn: "Next Question ➔",
         unitM: "m",
         unitKm: "km",
-        praise: ["Great job! That's correct! 🌟", "Excellent calculation! 👏", "Correct! Keep it up! 🎉", "Awesome! Mastered shortest path calculations! 💪"],
-        encourage: ["Try again! Compare total distances of different possible routes!", "It's okay, recalculate the value again!", "Keep going! Add up distances carefully!"],
+        praise: ["Great job! That's correct! 🌟", "Excellent calculation! 👏", "Correct! Keep it up! 🎉", "Awesome! Mastered unit concepts! 💪"],
+        encourage: ["Try again! Consider the size and distance of the object!", "It's okay, think about the right unit again!", "Keep going! Choose the most practical unit!"],
         hintKmToM: "Solution Hint: 1 km = 1000 m. Multiply the number of km by 1000.",
         hintComplex: "Solution Hint: Convert km to m (multiply by 1000) first, then add remaining meters.",
         hintMToKm: "Solution Hint: 1000 m = 1 km. Divide the number of m by 1000.",
         hintMeasure: "Solution Hint: Identify all routes from start to end, and compare their total distances.",
-        stepTitle: "Solution & Visual Breakdown:",
+        hintUnitSelection: "Solution Hint: mm for tiny thickness, cm for hand-held items, m for building height, km for long distances.",
+        stepTitle: "Solution Step-by-Step Analysis:",
         stepKmToM: `
           1. Formula: <strong>1 km = 1000 m</strong>.<br>
           2. Calculate: <strong>{num} × 1000</strong> = <strong>{ans}</strong>.<br>
@@ -746,6 +815,15 @@
           1. Shortest path: <strong>{path}</strong>.<br>
           2. Distance calculation: <strong>{calc}</strong>.<br>
           3. Shortest distance: <strong style="color:#e53e3e; font-size:1.2rem;">{ans} {unit}</strong>
+        `,
+        stepUnitSelection: `
+          1. Situation Analysis: <strong>{desc}</strong>.<br>
+          2. Unit Comparison:<br>
+             • <strong>mm</strong>: Very small thickness (e.g. key, stamp).<br>
+             • <strong>cm</strong>: Hand-held items (e.g. pencil box, shoes).<br>
+             • <strong>m</strong>: Building height, mountain height, track.<br>
+             • <strong>km</strong>: Long distances, marathon races, flight routes.<br>
+          3. Appropriate unit: <strong style="color:#e53e3e; font-size:1.2rem;">{ansZh} ({ansEn})</strong>
         `,
         diagramMeasureDetail: `
           • Start: <strong>{start}</strong>, End: <strong>{end}</strong><br>
@@ -814,6 +892,8 @@
       document.getElementById('desc-opt2').innerText = t.descOpt2;
       document.getElementById('opt3-title').innerText = t.opt3Title;
       document.getElementById('desc-opt3').innerText = t.descOpt3;
+      document.getElementById('opt4-title').innerText = t.opt4Title;
+      document.getElementById('desc-opt4').innerText = t.descOpt4;
       document.getElementById('lbl-back-btn').innerText = t.backBtn;
       document.getElementById('answer-input').placeholder = t.placeholderAns;
 
@@ -974,7 +1054,6 @@
       return qList;
     }
 
-    // Dijkstra 最短路徑演算法 helper
     function findShortestPath(nodes, edges, startNodeId, endNodeId) {
       const graph = {};
       nodes.forEach(n => graph[n.id] = []);
@@ -1035,7 +1114,6 @@
       };
     }
 
-    // 生成單元三題目 (參考圖像佈局: 商場, 街市, 巴士總站, 公園, 安樂大廈, 健永大廈, 永年大廈)
     function generateUnit3Questions() {
       const qList = [];
       const usedCombos = new Set();
@@ -1066,7 +1144,6 @@
       configs.forEach((cfg) => {
         let qObj = null;
         while (!qObj) {
-          // 定義邊線與彎曲控制點 (Q cx cy)
           const edgeDefs = [
             { id: 'e1', from: 'mall',    to: 'market',   valM: 1000, labelZh: '1 km',   labelEn: '1 km',   cx: 155, cy: 50 },
             { id: 'e2', from: 'market',  to: 'bus',      valM: 1000, labelZh: '1 km',   labelEn: '1 km',   cx: 305, cy: 70 },
@@ -1124,6 +1201,238 @@
       return qList;
     }
 
+    // 單元四專用大題庫：包含了 Word 文件中的全部 200 題（毫米 50 題、厘米 50 題、米 50 題、公里 50 題）
+    function generateUnit4Questions() {
+      const pool = [
+        // --- 一、 毫米 (mm) 50 題 ---
+        { descZh: "一把鋼尺的厚度約是 1 ____。", descEn: "The thickness of a steel ruler is about 1 ____.", ansZh: "毫米", ansEn: "mm", diff: "primary" },
+        { descZh: "一枚硬幣的厚度約為 2 ____。", descEn: "The thickness of a coin is about 2 ____.", ansZh: "毫米", ansEn: "mm", diff: "primary" },
+        { descZh: "一隻小螞蟻的體長約是 3 ____。", descEn: "The body length of a small ant is about 3 ____.", ansZh: "毫米", ansEn: "mm", diff: "primary" },
+        { descZh: "一張信用卡的厚度約是 1 ____。", descEn: "The thickness of a credit card is about 1 ____.", ansZh: "毫米", ansEn: "mm", diff: "primary" },
+        { descZh: "一顆米粒的長度約是 6 ____。", descEn: "The length of a grain of rice is about 6 ____.", ansZh: "毫米", ansEn: "mm", diff: "primary" },
+        { descZh: "一顆紅豆的寬度約是 4 ____。", descEn: "The width of a red bean is about 4 ____.", ansZh: "毫米", ansEn: "mm", diff: "primary" },
+        { descZh: "一塊橡皮擦的厚度約是 8 ____。", descEn: "The thickness of an eraser is about 8 ____.", ansZh: "毫米", ansEn: "mm", diff: "primary" },
+        { descZh: "一個硬幣的邊框厚度約是 2 ____。", descEn: "The rim thickness of a coin is about 2 ____.", ansZh: "毫米", ansEn: "mm", diff: "primary" },
+        { descZh: "一根大頭針的針頭直徑約是 1 ____。", descEn: "The head diameter of a pin is about 1 ____.", ansZh: "毫米", ansEn: "mm", diff: "primary" },
+        { descZh: "一個迴形針的金屬線直徑約是 1 ____。", descEn: "The wire diameter of a paper clip is about 1 ____.", ansZh: "毫米", ansEn: "mm", diff: "primary" },
+        { descZh: "一片洋薯片的厚度約是 2 ____。", descEn: "The thickness of a potato chip is about 2 ____.", ansZh: "毫米", ansEn: "mm", diff: "primary" },
+        { descZh: "一張學生證的厚度約是 1 ____。", descEn: "The thickness of a student ID card is about 1 ____.", ansZh: "毫米", ansEn: "mm", diff: "primary" },
+        { descZh: "一個手機殼的背板厚度約是 2 ____。", descEn: "The back plate thickness of a phone case is about 2 ____.", ansZh: "毫米", ansEn: "mm", diff: "primary" },
+        { descZh: "一顆綠豆的長度約是 5 ____。", descEn: "The length of a mung bean is about 5 ____.", ansZh: "毫米", ansEn: "mm", diff: "primary" },
+        { descZh: "一條蚊子的體長約是 4 ____。", descEn: "The body length of a mosquito is about 4 ____.", ansZh: "毫米", ansEn: "mm", diff: "primary" },
+        { descZh: "一把鑰匙的厚度約是 2 ____。", descEn: "The thickness of a key is about 2 ____.", ansZh: "毫米", ansEn: "mm", diff: "primary" },
+        { descZh: "一個塑膠杯蓋的邊緣厚度約是 1 ____。", descEn: "The edge thickness of a plastic cup lid is about 1 ____.", ansZh: "毫米", ansEn: "mm", diff: "primary" },
+        { descZh: "一顆蘋果種子的長度約是 7 ____。", descEn: "The length of an apple seed is about 7 ____.", ansZh: "毫米", ansEn: "mm", diff: "primary" },
+        { descZh: "一條眼鏡框的金屬邊厚度約是 2 ____。", descEn: "The metal rim thickness of an eyeglass frame is about 2 ____.", ansZh: "毫米", ansEn: "mm", diff: "primary" },
+        { descZh: "一本硬皮書的封面卡紙厚度約是 3 ____。", descEn: "The cover cardboard thickness of a hardcover book is about 3 ____.", ansZh: "毫米", ansEn: "mm", diff: "primary" },
+        { descZh: "一個按壓式鈕扣的直徑約是 10 ____。", descEn: "The diameter of a press button is about 10 ____.", ansZh: "毫米", ansEn: "mm", diff: "inter" },
+        { descZh: "一顆芝麻的長度約是 3 ____。", descEn: "The length of a sesame seed is about 3 ____.", ansZh: "毫米", ansEn: "mm", diff: "primary" },
+        { descZh: "一個鈕扣電池的厚度約是 3 ____。", descEn: "The thickness of a button battery is about 3 ____.", ansZh: "毫米", ansEn: "mm", diff: "primary" },
+        { descZh: "一條電線外皮的厚度約是 1 ____。", descEn: "The insulation layer thickness of a wire is about 1 ____.", ansZh: "毫米", ansEn: "mm", diff: "primary" },
+        { descZh: "一片木板的厚度約是 18 ____。", descEn: "The thickness of a wooden board is about 18 ____.", ansZh: "毫米", ansEn: "mm", diff: "inter" },
+        { descZh: "一個指甲剪的開口間隙約是 2 ____。", descEn: "The opening gap of a nail clipper is about 2 ____.", ansZh: "毫米", ansEn: "mm", diff: "primary" },
+        { descZh: "一顆西瓜籽的長度約是 8 ____。", descEn: "The length of a watermelon seed is about 8 ____.", ansZh: "毫米", ansEn: "mm", diff: "primary" },
+        { descZh: "一個包裝紙盒的紙板厚度約是 2 ____。", descEn: "The cardboard thickness of a packaging box is about 2 ____.", ansZh: "毫米", ansEn: "mm", diff: "primary" },
+        { descZh: "一條橡皮筋的截面寬度約是 2 ____。", descEn: "The cross-section width of a rubber band is about 2 ____.", ansZh: "毫米", ansEn: "mm", diff: "primary" },
+        { descZh: "一個小螺絲釘的螺紋間距約是 1 ____。", descEn: "The thread pitch of a small screw is about 1 ____.", ansZh: "毫米", ansEn: "mm", diff: "primary" },
+        { descZh: "顆珍珠的直徑約是 8 ____。", descEn: "The diameter of a pearl is about 8 ____.", ansZh: "毫米", ansEn: "mm", diff: "primary" },
+        { descZh: "一個塑膠尺的邊緣厚度約是 2 ____。", descEn: "The edge thickness of a plastic ruler is about 2 ____.", ansZh: "毫米", ansEn: "mm", diff: "primary" },
+        { descZh: "一條訂書針的線徑約是 1 ____。", descEn: "The wire diameter of a staple is about 1 ____.", ansZh: "毫米", ansEn: "mm", diff: "primary" },
+        { descZh: "一個隨身碟的金屬接頭厚度約是 5 ____。", descEn: "The metal connector thickness of a USB drive is about 5 ____.", ansZh: "毫米", ansEn: "mm", diff: "primary" },
+        { descZh: "一顆玉米粒的厚度約是 4 ____。", descEn: "The thickness of a corn kernel is about 4 ____.", ansZh: "毫米", ansEn: "mm", diff: "primary" },
+        { descZh: "一隻小瓢蟲的長度約是 6 ____。", descEn: "The length of a small ladybug is about 6 ____.", ansZh: "毫米", ansEn: "mm", diff: "primary" },
+        { descZh: "一個電路板的板材厚度約是 2 ____。", descEn: "The board thickness of a circuit board is about 2 ____.", ansZh: "毫米", ansEn: "mm", diff: "primary" },
+        { descZh: "一顆圓珠筆芯鋼珠的直徑約是 1 ____。", descEn: "The ball diameter of a ballpoint pen refill is about 1 ____.", ansZh: "毫米", ansEn: "mm", diff: "primary" },
+        { descZh: "一片鏡片的邊緣厚度約是 3 ____。", descEn: "The edge thickness of a lens is about 3 ____.", ansZh: "毫米", ansEn: "mm", diff: "primary" },
+        { descZh: "一張厚紙板的厚度約是 2 ____。", descEn: "The thickness of a cardboard sheet is about 2 ____.", ansZh: "毫米", ansEn: "mm", diff: "primary" },
+        { descZh: "一個金屬墊圈的厚度約是 1 ____。", descEn: "The thickness of a metal washer is about 1 ____.", ansZh: "毫米", ansEn: "mm", diff: "primary" },
+        { descZh: "一個隨身碟殼的金屬邊厚度約是 1 ____。", descEn: "The metal edge thickness of a USB drive case is about 1 ____.", ansZh: "毫米", ansEn: "mm", diff: "primary" },
+        { descZh: "一個木塞的縫隙寬度約是 2 ____。", descEn: "The gap width of a cork stopper is about 2 ____.", ansZh: "毫米", ansEn: "mm", diff: "primary" },
+        { descZh: "一顆藥丸的厚度約是 5 ____。", descEn: "The thickness of a pill is about 5 ____.", ansZh: "毫米", ansEn: "mm", diff: "primary" },
+        { descZh: "一個磁鐵扣的厚度約是 3 ____。", descEn: "The thickness of a magnetic clasp is about 3 ____.", ansZh: "毫米", ansEn: "mm", diff: "primary" },
+        { descZh: "一條皮帶扣環的金屬厚度約是 4 ____。", descEn: "The metal thickness of a belt buckle is about 4 ____.", ansZh: "毫米", ansEn: "mm", diff: "primary" },
+        { descZh: "一個耳機接頭的金屬針直徑約是 3 ____。", descEn: "The metal pin diameter of a headphone jack is about 3 ____.", ansZh: "毫米", ansEn: "mm", diff: "primary" },
+        { descZh: "一個鍵盤按鍵的浮起高度約是 2 ____。", descEn: "The travel height of a keyboard key is about 2 ____.", ansZh: "毫米", ansEn: "mm", diff: "primary" },
+        { descZh: "一個小風扇葉片的厚度約是 1 ____。", descEn: "The blade thickness of a small fan is about 1 ____.", ansZh: "毫米", ansEn: "mm", diff: "primary" },
+        { descZh: "一個相框後方木板的厚度約是 3 ____。", descEn: "The backboard thickness of a photo frame is about 3 ____.", ansZh: "毫米", ansEn: "mm", diff: "primary" },
+
+        // --- 二、 厘米 (cm) 50 題 ---
+        { descZh: "一隻新鉛筆的長度約是 18 ____。", descEn: "The length of a new pencil is about 18 ____.", ansZh: "厘米", ansEn: "cm", diff: "primary" },
+        { descZh: "一本數學課本的寬度約是 21 ____。", descEn: "The width of a math textbook is about 21 ____.", ansZh: "厘米", ansEn: "cm", diff: "primary" },
+        { descZh: "一個筷子盒的長度約為 25 ____。", descEn: "The length of a chopstick box is about 25 ____.", ansZh: "厘米", ansEn: "cm", diff: "primary" },
+        { descZh: "一張標準 A4 紙張的短邊長約 21 ____。", descEn: "The short side of a standard A4 paper is about 21 ____.", ansZh: "厘米", ansEn: "cm", diff: "primary" },
+        { descZh: "一個水杯的高度約是 15 ____。", descEn: "The height of a water cup is about 15 ____.", ansZh: "厘米", ansEn: "cm", diff: "primary" },
+        { descZh: "一隻手掌的寬度約是 8 ____。", descEn: "The width of a palm is about 8 ____.", ansZh: "厘米", ansEn: "cm", diff: "primary" },
+        { descZh: "一把普通剪刀的長度約是 16 ____。", descEn: "The length of ordinary scissors is about 16 ____.", ansZh: "厘米", ansEn: "cm", diff: "primary" },
+        { descZh: "一部智慧型手機的長度約是 15 ____。", descEn: "The length of a smartphone is about 15 ____.", ansZh: "厘米", ansEn: "cm", diff: "primary" },
+        { descZh: "一個乒乓球的直徑約是 4 ____。", descEn: "The diameter of a table tennis ball is about 4 ____.", ansZh: "厘米", ansEn: "cm", diff: "primary" },
+        { descZh: "一塊橡皮擦的長度約是 4 ____。", descEn: "The length of an eraser is about 4 ____.", ansZh: "厘米", ansEn: "cm", diff: "primary" },
+        { descZh: "一支牙刷的長度約是 18 ____。", descEn: "The length of a toothbrush is about 18 ____.", ansZh: "厘米", ansEn: "cm", diff: "primary" },
+        { descZh: "一張身份證的長度約是 9 ____。", descEn: "The length of an ID card is about 9 ____.", ansZh: "厘米", ansEn: "cm", diff: "primary" },
+        { descZh: "一個罐裝汽水的高度約是 12 ____。", descEn: "The height of a soda can is about 12 ____.", ansZh: "厘米", ansEn: "cm", diff: "primary" },
+        { descZh: "一根香蕉的長度約是 15 ____。", descEn: "The length of a banana is about 15 ____.", ansZh: "厘米", ansEn: "cm", diff: "primary" },
+        { descZh: "一個馬克杯的口徑直徑約是 8 ____。", descEn: "The mouth diameter of a mug is about 8 ____.", ansZh: "厘米", ansEn: "cm", diff: "primary" },
+        { descZh: "一隻手錶的面盤直徑約是 4 ____。", descEn: "The dial diameter of a watch is about 4 ____.", ansZh: "厘米", ansEn: "cm", diff: "primary" },
+        { descZh: "一個計算機的寬度約是 10 ____。", descEn: "The width of a calculator is about 10 ____.", ansZh: "厘米", ansEn: "cm", diff: "primary" },
+        { descZh: "一盒面紙巾盒的高度約是 9 ____。", descEn: "The height of a tissue box is about 9 ____.", ansZh: "厘米", ansEn: "cm", diff: "primary" },
+        { descZh: "一個汽水罐底部的直徑約是 6 ____。", descEn: "The bottom diameter of a soda can is about 6 ____.", ansZh: "厘米", ansEn: "cm", diff: "primary" },
+        { descZh: "一本字典的厚度約是 5 ____。", descEn: "The thickness of a dictionary is about 5 ____.", ansZh: "厘米", ansEn: "cm", diff: "primary" },
+        { descZh: "一隻成人腳掌的長度約是 25 ____。", descEn: "The foot length of an adult is about 25 ____.", ansZh: "厘米", ansEn: "cm", diff: "primary" },
+        { descZh: "一個硬幣的直徑約是 3 ____。", descEn: "The diameter of a coin is about 3 ____.", ansZh: "厘米", ansEn: "cm", diff: "primary" },
+        { descZh: "一個小筆袋的長度約是 20 ____。", descEn: "The length of a small pencil pouch is about 20 ____.", ansZh: "厘米", ansEn: "cm", diff: "primary" },
+        { descZh: "一個網球的直徑約是 7 ____。", descEn: "The diameter of a tennis ball is about 7 ____.", ansZh: "厘米", ansEn: "cm", diff: "primary" },
+        { descZh: "一把短直尺的長度約是 15 ____。", descEn: "The length of a short ruler is about 15 ____.", ansZh: "厘米", ansEn: "cm", diff: "primary" },
+        { descZh: "一個眼鏡盒的長度約是 16 ____。", descEn: "The length of a glasses case is about 16 ____.", ansZh: "厘米", ansEn: "cm", diff: "primary" },
+        { descZh: "一個蘋果的直徑約是 8 ____。", descEn: "The diameter of an apple is about 8 ____.", ansZh: "厘米", ansEn: "cm", diff: "primary" },
+        { descZh: "一個平板電腦的螢幕對角線長約 26 ____。", descEn: "The screen diagonal of a tablet computer is about 26 ____.", ansZh: "厘米", ansEn: "cm", diff: "inter" },
+        { descZh: "一個滑鼠的長度約是 11 ____。", descEn: "The length of a computer mouse is about 11 ____.", ansZh: "厘米", ansEn: "cm", diff: "primary" },
+        { descZh: "一捲捲紙巾的直徑約是 11 ____。", descEn: "The diameter of a toilet paper roll is about 11 ____.", ansZh: "厘米", ansEn: "cm", diff: "primary" },
+        { descZh: "一條抹布的邊長約是 30 ____。", descEn: "The side length of a rag is about 30 ____.", ansZh: "厘米", ansEn: "cm", diff: "primary" },
+        { descZh: "一個小釘書機的長度約是 10 ____。", descEn: "The length of a small stapler is about 10 ____.", ansZh: "厘米", ansEn: "cm", diff: "primary" },
+        { descZh: "一個開水壺的底面直徑約是 18 ____。", descEn: "The bottom diameter of a kettle is about 18 ____.", ansZh: "厘米", ansEn: "cm", diff: "primary" },
+        { descZh: "一本小說的長度約是 20 ____。", descEn: "The length of a novel is about 20 ____.", ansZh: "厘米", ansEn: "cm", diff: "primary" },
+        { descZh: "一個羽毛球的高度約是 8 ____。", descEn: "The height of a shuttlecock is about 8 ____.", ansZh: "厘米", ansEn: "cm", diff: "primary" },
+        { descZh: "一隻鉛筆盒的寬度約是 7 ____。", descEn: "The width of a pencil box is about 7 ____.", ansZh: "厘米", ansEn: "cm", diff: "primary" },
+        { descZh: "一個長方形便當盒的寬度約是 14 ____。", descEn: "The width of a rectangular bento box is about 14 ____.", ansZh: "厘米", ansEn: "cm", diff: "primary" },
+        { descZh: "一個茶杯的高度約是 7 ____。", descEn: "The height of a teacup is about 7 ____.", ansZh: "厘米", ansEn: "cm", diff: "primary" },
+        { descZh: "一個開關面板的邊長約是 9 ____。", descEn: "The side length of a switch panel is about 9 ____.", ansZh: "厘米", ansEn: "cm", diff: "primary" },
+        { descZh: "一個相框的短邊長約是 15 ____。", descEn: "The short side length of a photo frame is about 15 ____.", ansZh: "厘米", ansEn: "cm", diff: "primary" },
+        { descZh: "一隻小泰迪熊玩具的高度約是 25 ____。", descEn: "The height of a small teddy bear toy is about 25 ____.", ansZh: "厘米", ansEn: "cm", diff: "primary" },
+        { descZh: "一個熱水瓶蓋子的直徑約是 9 ____。", descEn: "The lid diameter of a thermos is about 9 ____.", ansZh: "厘米", ansEn: "cm", diff: "primary" },
+        { descZh: "一個隨身碟的長度約是 6 ____。", descEn: "The length of a USB drive is about 6 ____.", ansZh: "厘米", ansEn: "cm", diff: "primary" },
+        { descZh: "一個洗面乳管的長度約是 15 ____。", descEn: "The length of a facial cleanser tube is about 15 ____.", ansZh: "厘米", ansEn: "cm", diff: "primary" },
+        { descZh: "一個小花盆的高約是 12 ____。", descEn: "The height of a small flowerpot is about 12 ____.", ansZh: "厘米", ansEn: "cm", diff: "primary" },
+        { descZh: "一個罐頭的直徑約是 7 ____。", descEn: "The diameter of a tin can is about 7 ____.", ansZh: "厘米", ansEn: "cm", diff: "primary" },
+        { descZh: "一個印章的長度約是 6 ____。", descEn: "The length of a stamp seal is about 6 ____.", ansZh: "厘米", ansEn: "cm", diff: "primary" },
+        { descZh: "一個滑鼠墊的寬度約是 22 ____。", descEn: "The width of a mouse pad is about 22 ____.", ansZh: "厘米", ansEn: "cm", diff: "primary" },
+        { descZh: "一個排球的直徑約是 21 ____。", descEn: "The diameter of a volleyball is about 21 ____.", ansZh: "厘米", ansEn: "cm", diff: "primary" },
+        { descZh: "一個耳機盒的長度約是 6 ____。", descEn: "The length of an earphone case is about 6 ____.", ansZh: "厘米", ansEn: "cm", diff: "primary" },
+
+        // --- 三、 米 (m) 50 題 ---
+        { descZh: "教室裡黑板的長度約是 4 ____。", descEn: "The length of the blackboard in the classroom is about 4 ____.", ansZh: "米", ansEn: "m", diff: "primary" },
+        { descZh: "學校籃球場的長度約是 28 ____。", descEn: "The length of the school basketball court is about 28 ____.", ansZh: "米", ansEn: "m", diff: "primary" },
+        { descZh: "一層住宅樓房的高度約是 3 ____。", descEn: "The height of one storey of a residential building is about 3 ____.", ansZh: "米", ansEn: "m", diff: "primary" },
+        { descZh: "學校操場一圈跑道的長度約是 200 ____。", descEn: "One lap of the school playground running track is about 200 ____.", ansZh: "米", ansEn: "m", diff: "primary" },
+        { descZh: "一輛雙層巴士的車身總長約是 12 ____。", descEn: "The overall length of a double-decker bus is about 12 ____.", ansZh: "米", ansEn: "m", diff: "primary" },
+        { descZh: "一張雙人床的長度約是 2 ____。", descEn: "The length of a double bed is about 2 ____.", ansZh: "米", ansEn: "m", diff: "primary" },
+        { descZh: "一根街上路燈燈柱的高度約是 6 ____。", descEn: "The height of a street lamp post is about 6 ____.", ansZh: "米", ansEn: "m", diff: "primary" },
+        { descZh: "一個標準游泳池的長度約是 50 ____。", descEn: "The length of a standard swimming pool is about 50 ____.", ansZh: "米", ansEn: "m", diff: "primary" },
+        { descZh: "一間教室的高度約是 4 ____。", descEn: "The height of a classroom is about 4 ____.", ansZh: "米", ansEn: "m", diff: "primary" },
+        { descZh: "一扇家用房間門的高度約是 2 ____。", descEn: "The height of a bedroom door is about 2 ____.", ansZh: "米", ansEn: "m", diff: "primary" },
+        { descZh: "一輛私家車的車長約是 5 ____。", descEn: "The length of a private car is about 5 ____.", ansZh: "米", ansEn: "m", diff: "primary" },
+        { descZh: "一棵大樹的高度約是 10 ____。", descEn: "The height of a big tree is about 10 ____.", ansZh: "米", ansEn: "m", diff: "primary" },
+        { descZh: "一張餐桌的長度約是 2 ____。", descEn: "The length of a dining table is about 2 ____.", ansZh: "米", ansEn: "m", diff: "primary" },
+        { descZh: "一條羽毛球場的長度約是 13 ____。", descEn: "The length of a badminton court is about 13 ____.", ansZh: "米", ansEn: "m", diff: "primary" },
+        { descZh: "一個足球門的高度約是 2 ____。", descEn: "The height of a soccer goal post is about 2 ____.", ansZh: "米", ansEn: "m", diff: "primary" },
+        { descZh: "一台家用冰箱的高度約是 2 ____。", descEn: "The height of a home refrigerator is about 2 ____.", ansZh: "米", ansEn: "m", diff: "primary" },
+        { descZh: "一條羽毛球網的高度約是 2 ____。", descEn: "The height of a badminton net is about 2 ____.", ansZh: "米", ansEn: "m", diff: "primary" },
+        { descZh: "一個地鐵車廂的長度約是 22 ____。", descEn: "The length of a subway car is about 22 ____.", ansZh: "米", ansEn: "m", diff: "inter" },
+        { descZh: "一個家庭陽台的長度約是 3 ____。", descEn: "The length of a home balcony is about 3 ____.", ansZh: "米", ansEn: "m", diff: "primary" },
+        { descZh: "一個標準乒乓球檯的長度約是 3 ____。", descEn: "The length of a standard table tennis table is about 3 ____.", ansZh: "米", ansEn: "m", diff: "primary" },
+        { descZh: "一座行人天橋的高度約是 5 ____。", descEn: "The height of a footbridge is about 5 ____.", ansZh: "米", ansEn: "m", diff: "primary" },
+        { descZh: "一條標準排球場的長度約是 18 ____。", descEn: "The length of a standard volleyball court is about 18 ____.", ansZh: "米", ansEn: "m", diff: "primary" },
+        { descZh: "一輛卡車的車身總長約是 8 ____。", descEn: "The overall length of a truck is about 8 ____.", ansZh: "米", ansEn: "m", diff: "primary" },
+        { descZh: "一張乒乓球網的長度約是 2 ____。", descEn: "The length of a table tennis net is about 2 ____.", ansZh: "米", ansEn: "m", diff: "primary" },
+        { descZh: "一個學校旗桿的高度約是 12 ____。", descEn: "The height of a school flagpole is about 12 ____.", ansZh: "米", ansEn: "m", diff: "primary" },
+        { descZh: "一個客廳的沙發長度約是 3 ____。", descEn: "The length of a living room sofa is about 3 ____.", ansZh: "米", ansEn: "m", diff: "primary" },
+        { descZh: "一條地下隧道內單線車道的寬度約是 4 ____。", descEn: "The width of a single lane in an underground tunnel is about 4 ____.", ansZh: "米", ansEn: "m", diff: "primary" },
+        { descZh: "一個大衣櫃的高度約是 2 ____。", descEn: "The height of a large wardrobe is about 2 ____.", ansZh: "米", ansEn: "m", diff: "primary" },
+        { descZh: "一輛地鐵整列車組的總長約是 140 ____。", descEn: "The total length of a subway train set is about 140 ____.", ansZh: "米", ansEn: "m", diff: "inter" },
+        { descZh: "一個花園圍牆的高度約是 2 ____。", descEn: "The height of a garden wall is about 2 ____.", ansZh: "米", ansEn: "m", diff: "primary" },
+        { descZh: "一座小型噴水池的直徑約是 6 ____。", descEn: "The diameter of a small fountain is about 6 ____.", ansZh: "米", ansEn: "m", diff: "primary" },
+        { descZh: "一條斑馬線的長度約是 10 ____。", descEn: "The length of a zebra crossing is about 10 ____.", ansZh: "米", ansEn: "m", diff: "primary" },
+        { descZh: "一個舞台的寬度約是 15 ____。", descEn: "The width of a stage is about 15 ____.", ansZh: "米", ansEn: "m", diff: "primary" },
+        { descZh: "一輛拖頭貨車的全長約是 16 ____。", descEn: "The total length of a trailer truck is about 16 ____.", ansZh: "米", ansEn: "m", diff: "primary" },
+        { descZh: "一座小山丘的高度約是 80 ____。", descEn: "The height of a small hill is about 80 ____.", ansZh: "米", ansEn: "m", diff: "inter" },
+        { descZh: "一間羽毛球館的天花板高度約是 9 ____。", descEn: "The ceiling height of a badminton hall is about 9 ____.", ansZh: "米", ansEn: "m", diff: "primary" },
+        { descZh: "一個長方形游泳池的寬度約是 25 ____。", descEn: "The width of a rectangular swimming pool is about 25 ____.", ansZh: "米", ansEn: "m", diff: "primary" },
+        { descZh: "一個住宅客廳的長度約是 5 ____。", descEn: "The length of a residential living room is about 5 ____.", ansZh: "米", ansEn: "m", diff: "primary" },
+        { descZh: "一個大型展覽館的大門高度約是 4 ____。", descEn: "The main door height of a large exhibition hall is about 4 ____.", ansZh: "米", ansEn: "m", diff: "primary" },
+        { descZh: "一艘小型遊艇的長度約是 10 ____。", descEn: "The length of a small yacht is about 10 ____.", ansZh: "米", ansEn: "m", diff: "primary" },
+        { descZh: "一個戶外網球場的長度約是 24 ____。", descEn: "The length of an outdoor tennis court is about 24 ____.", ansZh: "米", ansEn: "m", diff: "primary" },
+        { descZh: "一條學校走廊的長度約是 30 ____。", descEn: "The length of a school corridor is about 30 ____.", ansZh: "米", ansEn: "m", diff: "primary" },
+        { descZh: "一個窗簾的長度約是 3 ____。", descEn: "The length of a curtain is about 3 ____.", ansZh: "米", ansEn: "m", diff: "primary" },
+        { descZh: "一個跳遠沙坑的長度約是 9 ____。", descEn: "The length of a long jump sandpit is about 9 ____.", ansZh: "米", ansEn: "m", diff: "primary" },
+        { descZh: "一輛單車的全長約是 2 ____。", descEn: "The total length of a bicycle is about 2 ____.", ansZh: "米", ansEn: "m", diff: "primary" },
+        { descZh: "一個公園涼亭的高度約是 4 ____。", descEn: "The height of a park pavilion is about 4 ____.", ansZh: "米", ansEn: "m", diff: "primary" },
+        { descZh: "一個高爾夫球場短洞距離約是 150 ____。", descEn: "The short hole distance of a golf course is about 150 ____.", ansZh: "米", ansEn: "m", diff: "inter" },
+        { descZh: "一個標準籃球架框離地高度約是 3 ____。", descEn: "The height of a basketball hoop off the ground is about 3 ____.", ansZh: "米", ansEn: "m", diff: "primary" },
+        { descZh: "一條河邊步道的長度約是 800 ____。", descEn: "The length of a riverside walkway is about 800 ____.", ansZh: "米", ansEn: "m", diff: "inter" },
+        { descZh: "一座立體交叉橋底的淨空高度約是 5 ____。", descEn: "The clearance height under an flyover is about 5 ____.", ansZh: "米", ansEn: "m", diff: "primary" },
+
+        // --- 四、 公里 (km) 50 題 ---
+        { descZh: "港珠澳大橋的主橋全長約 30 ____。", descEn: "The main bridge length of Hong Kong-Zhuhai-Macao Bridge is about 30 ____.", ansZh: "公里", ansEn: "km", diff: "inter" },
+        { descZh: "乘坐高鐵從香港到深圳的距離約是 30 ____。", descEn: "The high-speed rail distance from Hong Kong to Shenzhen is about 30 ____.", ansZh: "公里", ansEn: "km", diff: "inter" },
+        { descZh: "香港環島單車徑的總長度約是 60 ____。", descEn: "The total length of the Hong Kong Island cycling track is about 60 ____.", ansZh: "公里", ansEn: "km", diff: "inter" },
+        { descZh: "從香港飛往北京的飛行距離約是 2000 ____。", descEn: "The flight distance from Hong Kong to Beijing is about 2000 ____.", ansZh: "公里", ansEn: "km", diff: "adv" },
+        { descZh: "一條高速公路的全長約為 150 ____。", descEn: "The total length of an expressway is about 150 ____.", ansZh: "公里", ansEn: "km", diff: "inter" },
+        { descZh: "馬拉松長跑比賽的全程長約 42 ____。", descEn: "The full marathon race distance is about 42 ____.", ansZh: "公里", ansEn: "km", diff: "primary" },
+        { descZh: "從香港到廣州的鐵路距離約是 140 ____。", descEn: "The railway distance from Hong Kong to Guangzhou is about 140 ____.", ansZh: "公里", ansEn: "km", diff: "inter" },
+        { descZh: "屯門公路的全長約是 19 ____。", descEn: "The total length of Tuen Mun Road is about 19 ____.", ansZh: "公里", ansEn: "km", diff: "inter" },
+        { descZh: "萬里長城的總長度約是 21000 ____。", descEn: "The total length of the Great Wall of China is about 21000 ____.", ansZh: "公里", ansEn: "km", diff: "adv" },
+        { descZh: "環法單車賽的總行程約是 3500 ____。", descEn: "The total distance of Tour de France is about 3500 ____.", ansZh: "公里", ansEn: "km", diff: "adv" },
+        { descZh: "赤柱到尖沙咀的車程距離約是 20 ____。", descEn: "The driving distance from Stanley to Tsim Sha Tsui is about 20 ____.", ansZh: "公里", ansEn: "km", diff: "inter" },
+        { descZh: "赤鱲角機場到中環的車程約是 38 ____。", descEn: "The driving distance from Chek Lap Kok Airport to Central is about 38 ____.", ansZh: "公里", ansEn: "km", diff: "inter" },
+        { descZh: "地球赤道的周長約是 40000 ____。", descEn: "The equatorial circumference of Earth is about 40000 ____.", ansZh: "公里", ansEn: "km", diff: "adv" },
+        { descZh: "長江的全長約是 6300 ____。", descEn: "The total length of the Yangtze River is about 6300 ____.", ansZh: "公里", ansEn: "km", diff: "adv" },
+        { descZh: "從台北到高雄的高鐵路線長度約是 345 ____。", descEn: "The high-speed rail route from Taipei to Kaohsiung is about 345 ____.", ansZh: "公里", ansEn: "km", diff: "inter" },
+        { descZh: "一個省份東西方向的寬度約是 500 ____。", descEn: "The east-west width of a province is about 500 ____.", ansZh: "公里", ansEn: "km", diff: "adv" },
+        { descZh: "飛機一般巡航飛行的高度約是 10 ____。", descEn: "The cruising altitude of an airplane is about 10 ____.", ansZh: "公里", ansEn: "km", diff: "inter" },
+        { descZh: "乘坐渡輪從香港島到長洲的航程約是 20 ____。", descEn: "The ferry route distance from Hong Kong Island to Cheung Chau is about 20 ____.", ansZh: "公里", ansEn: "km", diff: "inter" },
+        { descZh: "青馬大橋主跨長度約是 1 ____。", descEn: "The main span length of Tsing Ma Bridge is about 1 ____.", ansZh: "公里", ansEn: "km", diff: "inter" },
+        { descZh: "吐露港公路的全長約是 11 ____。", descEn: "The total length of Tolo Highway is about 11 ____.", ansZh: "公里", ansEn: "km", diff: "inter" },
+        { descZh: "地球到月球的平均距離約是 384000 ____。", descEn: "The average distance from Earth to the Moon is about 384000 ____.", ansZh: "公里", ansEn: "km", diff: "adv" },
+        { descZh: "熱帶氣旋進入香港 800 ____ 範圍內時，天文台會考慮發出一號戒備信號。", descEn: "When a tropical cyclone comes within 800 ____ of Hong Kong, the Observatory considers issuing Standby Signal No. 1.", ansZh: "公里", ansEn: "km", diff: "inter" },
+        { descZh: "香港海岸線的總長度約是 1180 ____。", descEn: "The total coastline length of Hong Kong is about 1180 ____.", ansZh: "公里", ansEn: "km", diff: "adv" },
+        { descZh: "香港和澳門之間的直線距離約是 60 ____。", descEn: "The direct distance between Hong Kong and Macao is about 60 ____.", ansZh: "公里", ansEn: "km", diff: "inter" },
+        { descZh: "從香港飛往倫敦的飛行航程約是 9600 ____。", descEn: "The flight distance from Hong Kong to London is about 9600 ____.", ansZh: "公里", ansEn: "km", diff: "adv" },
+        { descZh: "一條國道公路的全長約是 3000 ____。", descEn: "The total length of a national highway is about 3000 ____.", ansZh: "公里", ansEn: "km", diff: "adv" },
+        { descZh: "人類徒步一日極限行走距離約是 50 ____。", descEn: "The limit distance of a daily human walking trek is about 50 ____.", ansZh: "公里", ansEn: "km", diff: "inter" },
+        { descZh: "一個城市繞城高速公路的全長約是 100 ____。", descEn: "The total length of a city ring highway is about 100 ____.", ansZh: "公里", ansEn: "km", diff: "inter" },
+        { descZh: "珠江流域的幹線長度約是 2200 ____。", descEn: "The main channel length of the Pearl River basin is about 2200 ____.", ansZh: "公里", ansEn: "km", diff: "adv" },
+        { descZh: "深圳到廣州的高速公路長度約是 100 ____。", descEn: "The expressway distance from Shenzhen to Guangzhou is about 100 ____.", ansZh: "公里", ansEn: "km", diff: "inter" },
+        { descZh: "跨越海峽的大橋長度約是 36 ____。", descEn: "The length of a sea-crossing bridge is about 36 ____.", ansZh: "公里", ansEn: "km", diff: "inter" },
+        { descZh: "乘坐地鐵荃灣綫從中環到荃灣的路線長度約是 16 ____。", descEn: "The route length of Tsuen Wan Line from Central to Tsuen Wan is about 16 ____.", ansZh: "公里", ansEn: "km", diff: "inter" },
+        { descZh: "從上海到北京的飛行距離約是 1100 ____。", descEn: "The flight distance from Shanghai to Beijing is about 1100 ____.", ansZh: "公里", ansEn: "km", diff: "adv" },
+        { descZh: "遠洋船隻行駛的海洋航線全程約是 5000 ____。", descEn: "The oceanic route distance for ocean cargo ships is about 5000 ____.", ansZh: "公里", ansEn: "km", diff: "adv" },
+        { descZh: "一個國家從南到北的最大距離約是 5500 ____。", descEn: "The maximum north-to-south distance of a country is about 5500 ____.", ansZh: "公里", ansEn: "km", diff: "adv" },
+        { descZh: "一條登山步道的全程長度約是 12 ____。", descEn: "The full distance of a hiking trail is about 12 ____.", ansZh: "公里", ansEn: "km", diff: "inter" },
+        { descZh: "地球大氣層對流層的平均厚度約是 12 ____。", descEn: "The average thickness of Earth's troposphere is about 12 ____.", ansZh: "公里", ansEn: "km", diff: "inter" },
+        { descZh: "一個大型森林公園的邊界周長約是 45 ____。", descEn: "The boundary perimeter of a large forest park is about 45 ____.", ansZh: "公里", ansEn: "km", diff: "inter" },
+        { descZh: "環湖單車賽的一圈長度約是 25 ____。", descEn: "The lap distance of a lake cycling race is about 25 ____.", ansZh: "公里", ansEn: "km", diff: "inter" },
+        { descZh: "從香港飛往東京的距離約是 2900 ____。", descEn: "The flight distance from Hong Kong to Tokyo is about 2900 ____.", ansZh: "公里", ansEn: "km", diff: "adv" },
+        { descZh: "貫穿南北的鐵路幹線全長約是 2300 ____。", descEn: "The total length of a north-south trunk railway is about 2300 ____.", ansZh: "公里", ansEn: "km", diff: "adv" },
+        { descZh: "某個省份境內的河流總長度約是 450 ____。", descEn: "The total length of rivers within a province is about 450 ____.", ansZh: "公里", ansEn: "km", diff: "adv" },
+        { descZh: "一艘郵輪航行一整天的距離約是 600 ____。", descEn: "The sailing distance of a cruise ship in a day is about 600 ____.", ansZh: "公里", ansEn: "km", diff: "adv" },
+        { descZh: "人造衛星繞地球運行軌道高度約是 400 ____。", descEn: "The orbit altitude of a satellite orbiting Earth is about 400 ____.", ansZh: "公里", ansEn: "km", diff: "adv" },
+        { descZh: "從市中心開車到郊野公園的距離約是 25 ____。", descEn: "The driving distance from city center to country park is about 25 ____.", ansZh: "公里", ansEn: "km", diff: "inter" },
+        { descZh: "從香港飛往新加坡的飛行距離約是 2600 ____。", descEn: "The flight distance from Hong Kong to Singapore is about 2600 ____.", ansZh: "公里", ansEn: "km", diff: "adv" },
+        { descZh: "一座海島周圍海岸線長度約是 80 ____。", descEn: "The coastline length around an island is about 80 ____.", ansZh: "公里", ansEn: "km", diff: "inter" },
+        { descZh: "越野馬拉松賽事的總長度約是 100 ____。", descEn: "The total length of a trail marathon race is about 100 ____.", ansZh: "公里", ansEn: "km", diff: "inter" },
+        { descZh: "香港地鐵東鐵綫的全長約是 47 ____。", descEn: "The total length of MTR East Rail Line is about 47 ____.", ansZh: "公里", ansEn: "km", diff: "inter" },
+        { descZh: "台灣環島鐵路的總長度約是 1065 ____。", descEn: "The total length of Taiwan railway network around the island is about 1065 ____.", ansZh: "公里", ansEn: "km", diff: "adv" }
+      ];
+
+      // 使用洗牌演算法（Fisher-Yates Shuffle）隨機打亂題庫，並抽取前 10 條完全不重複題目
+      const shuffled = [...pool];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+
+      const selected = shuffled.slice(0, 10);
+
+      return selected.map(item => ({
+        type: 'unit_selection',
+        diff: item.diff,
+        descZh: item.descZh,
+        descEn: item.descEn,
+        ansZh: item.ansZh,
+        ansEn: item.ansEn,
+        ans: item.ansZh
+      }));
+    }
+
     function generateQuestions(mode) {
       if (mode === 'km_to_m') {
         return generateUnit1Questions();
@@ -1131,11 +1440,12 @@
         return generateUnit2Questions();
       } else if (mode === 'measurement') {
         return generateUnit3Questions();
+      } else if (mode === 'unit_selection') {
+        return generateUnit4Questions();
       }
       return [];
     }
 
-    // 動態繪製卡通風格地圖 (SVG) - 包含綠色最短路徑標記及流光效果
     function renderMeasurementSVG(q, highlightPath = false) {
       const container = document.getElementById('measurement-area');
       container.innerHTML = '';
@@ -1143,7 +1453,6 @@
       const svgWidth = 680;
       const svgHeight = 290;
 
-      // 提取最短路徑的邊線 ID 與 節點 ID
       const highlightedEdgeIds = new Set();
       const highlightedNodeIds = new Set();
       if (highlightPath && q.spData) {
@@ -1161,7 +1470,6 @@
         </defs>
       `;
 
-      // 1. 繪製曲折路線 (Edges)
       q.edges.forEach(e => {
         let n1 = q.nodes.find(n => n.id === e.from);
         let n2 = q.nodes.find(n => n.id === e.to);
@@ -1169,29 +1477,24 @@
         const isHighlighted = highlightedEdgeIds.has(e.id);
         const pathD = `M ${n1.x} ${n1.y} Q ${e.cx} ${e.cy} ${n2.x} ${n2.y}`;
 
-        // 底色外框 (高亮時為鮮綠色 #276749，一般為草綠色 #a2d182)
         const outerStroke = isHighlighted ? "#276749" : "#a2d182";
         const strokeW = isHighlighted ? "10" : "7";
 
         svgHtml += `<path d="${pathD}" fill="none" stroke="${outerStroke}" stroke-width="${strokeW}" stroke-linecap="round" />`;
         
-        // 如果需要高亮最短路徑，使用流動的白色/淡綠色虛線，吸引學生注意力
         const dashedClass = isHighlighted ? "flowing-path" : "";
         const dashStroke = isHighlighted ? "#c6f6d5" : "#ffffff";
         svgHtml += `<path class="${dashedClass}" d="${pathD}" fill="none" stroke="${dashStroke}" stroke-width="3" stroke-linecap="round" />`;
 
-        // 計算二次貝茲曲線中點 (t=0.5) 及其切線/法線方向，將距離標籤位移，避開路徑
         let midX = 0.25 * n1.x + 0.5 * e.cx + 0.25 * n2.x;
         let midY = 0.25 * n1.y + 0.5 * e.cy + 0.25 * n2.y;
 
-        // 計算切線向量 (Tangent Vector) 及法線向量 (Normal Vector)
         let dx = n2.x - n1.x;
         let dy = n2.y - n1.y;
         let len = Math.sqrt(dx * dx + dy * dy);
         let nx = -dy / (len || 1);
         let ny = dx / (len || 1);
 
-        // 垂直偏移距離 22px，使數字完全離開店路線路徑
         let offset = 22;
         let labelX = midX + nx * offset;
         let labelY = midY + ny * offset;
@@ -1209,7 +1512,6 @@
         `;
       });
 
-      // 2. 繪製地點卡片 (Nodes)
       q.nodes.forEach(n => {
         let isStart = (n.id === q.startNodeObj.id);
         let isEnd = (n.id === q.endNodeObj.id);
@@ -1232,7 +1534,6 @@
           </g>
         `;
 
-        // 起點/終點頂部標籤
         if (isStart) {
           svgHtml += `
             <rect x="${n.x - 22}" y="${n.y - 39}" width="44" height="16" rx="8" fill="#e53e3e"/>
@@ -1268,6 +1569,7 @@
 
     function loadQuestion() {
       wrongAttempts = 0;
+
       document.getElementById('feedback-area').classList.add('hidden');
       document.getElementById('feedback-area').innerHTML = '';
 
@@ -1276,14 +1578,27 @@
       input.disabled = false;
       input.classList.remove('input-correct', 'input-wrong');
 
+      // 重設單元四所有按鈕狀態
+      const optionButtons = document.querySelectorAll('.unit-opt-btn');
+      optionButtons.forEach(btn => {
+        btn.disabled = false;
+        btn.classList.remove('correct-choice', 'wrong-choice');
+      });
+
       updateQuestionDisplay();
 
-      document.getElementById('btn-submit').classList.remove('hidden');
+      if (currentMode === 'unit_selection') {
+        document.getElementById('btn-submit').classList.add('hidden');
+      } else {
+        document.getElementById('btn-submit').classList.remove('hidden');
+      }
       document.getElementById('btn-next').classList.add('hidden');
 
-      setTimeout(() => {
-        input.focus();
-      }, 100);
+      if (currentMode !== 'unit_selection') {
+        setTimeout(() => {
+          input.focus();
+        }, 100);
+      }
     }
 
     function updateQuestionDisplay() {
@@ -1293,6 +1608,7 @@
       let modeName = t.unit1;
       if (currentMode === 'complex_to_single') modeName = t.unit2;
       else if (currentMode === 'measurement') modeName = t.unit3;
+      else if (currentMode === 'unit_selection') modeName = t.unit4;
 
       document.getElementById('quiz-mode-name').innerText = modeName;
       document.getElementById('quiz-progress-text').innerText = `${t.qProgress} ${currentQIndex + 1} / ${questions.length}`;
@@ -1310,10 +1626,27 @@
       }
 
       const measureArea = document.getElementById('measurement-area');
+      const singleInputContainer = document.getElementById('single-input-container');
+      const unitLabel = document.getElementById('unit-label');
+      const unitOptionsArea = document.getElementById('unit-options-area');
+
       measureArea.classList.remove('highlight-glow');
 
-      if (q.type === 'measurement') {
+      if (q.type === 'unit_selection') {
+        measureArea.classList.add('hidden');
+        singleInputContainer.classList.add('hidden');
+        unitLabel.classList.add('hidden');
+        unitOptionsArea.classList.remove('hidden');
+
+        const descText = currentLang === 'zh' ? q.descZh : q.descEn;
+        document.getElementById('equation-prefix').innerText = descText;
+
+      } else if (q.type === 'measurement') {
         measureArea.classList.remove('hidden');
+        singleInputContainer.classList.remove('hidden');
+        unitLabel.classList.remove('hidden');
+        unitOptionsArea.classList.add('hidden');
+
         renderMeasurementSVG(q, false);
 
         const unitStr = currentLang === 'zh' ? q.targetUnit : q.targetUnitEn;
@@ -1328,30 +1661,32 @@
         document.getElementById('unit-label').innerText = unitStr;
       } else {
         measureArea.classList.add('hidden');
+        singleInputContainer.classList.remove('hidden');
+        unitLabel.classList.remove('hidden');
+        unitOptionsArea.classList.add('hidden');
 
         let exprStr = '';
-        let unitLabel = '';
+        let uLabelStr = '';
 
         if (q.type === 'km_to_m') {
           exprStr = currentLang === 'zh' ? `${q.rawNum} 公里 = ` : `${q.rawNum} km = `;
-          unitLabel = currentLang === 'zh' ? '米' : 'm';
+          uLabelStr = currentLang === 'zh' ? '米' : 'm';
         } else if (q.type === 'm_to_km') {
           exprStr = currentLang === 'zh' ? `${q.rawNum} 米 = ` : `${q.rawNum} m = `;
-          unitLabel = currentLang === 'zh' ? '公里' : 'km';
+          uLabelStr = currentLang === 'zh' ? '公里' : 'km';
         } else if (q.type === 'complex_to_single') {
           exprStr = currentLang === 'zh' ? `${q.kmVal} 公里 ${q.mVal} 米 = ` : `${q.kmVal} km ${q.mVal} m = `;
-          unitLabel = currentLang === 'zh' ? '米' : 'm';
+          uLabelStr = currentLang === 'zh' ? '米' : 'm';
         }
 
         document.getElementById('equation-prefix').innerText = exprStr;
-        document.getElementById('unit-label').innerText = unitLabel;
+        document.getElementById('unit-label').innerText = uLabelStr;
       }
 
       document.getElementById('btn-next').innerText = t.nextBtn;
       document.getElementById('btn-submit').innerText = t.submitBtn;
     }
 
-    // 觸發綠色最短路徑高亮與發光脈衝吸引效果（取消搖一搖）
     function triggerMapHighlight(q) {
       const area = document.getElementById('measurement-area');
       renderMeasurementSVG(q, true);
@@ -1361,6 +1696,11 @@
     function generateVisualDiagram(q) {
       const t = i18n[currentLang];
       const unitStr = currentLang === 'zh' ? q.targetUnit : q.targetUnitEn;
+
+      // 單元四：不使用圖像化拆解，回傳空字串
+      if (q.type === 'unit_selection') {
+        return '';
+      }
 
       if (q.type === 'measurement') {
         const isZh = currentLang === 'zh';
@@ -1486,6 +1826,95 @@
       `;
     }
 
+    // 單元四專用：點擊選項即時判定作答與回饋
+    function chooseUnit(selectedZh, selectedEn, btnElement) {
+      const q = questions[currentQIndex];
+      const t = i18n[currentLang];
+      const feedback = document.getElementById('feedback-area');
+      const isCorrect = (selectedZh === q.ansZh);
+      const userValDisplay = `${selectedZh} (${selectedEn})`;
+
+      if (!records[currentQIndex]) {
+        records[currentQIndex] = {
+          qIndex: currentQIndex + 1,
+          questionObj: q,
+          targetAns: `${q.ansZh} (${q.ansEn})`,
+          userFirstWrong: null,
+          isCorrectOnFirstTry: false,
+          solved: false
+        };
+      }
+
+      if (isCorrect) {
+        if (wrongAttempts === 0) {
+          records[currentQIndex].isCorrectOnFirstTry = true;
+        }
+        records[currentQIndex].solved = true;
+
+        // 標示點選為正確
+        btnElement.classList.add('correct-choice');
+        
+        // 禁用所有按鈕
+        document.querySelectorAll('.unit-opt-btn').forEach(b => b.disabled = true);
+
+        const randomPraise = t.praise[Math.floor(Math.random() * t.praise.length)];
+        feedback.className = "feedback-box feedback-success";
+        feedback.innerHTML = `<strong>${randomPraise}</strong>`;
+        feedback.classList.remove('hidden');
+
+        document.getElementById('btn-next').classList.remove('hidden');
+        document.getElementById('btn-next').focus();
+
+      } else {
+        wrongAttempts++;
+        if (records[currentQIndex].userFirstWrong === null) {
+          records[currentQIndex].userFirstWrong = userValDisplay;
+        }
+
+        // 標示該點選按鈕為錯誤並鎖定
+        btnElement.classList.add('wrong-choice');
+        btnElement.disabled = true;
+
+        if (wrongAttempts < 3) {
+          const randomEnc = t.encourage[Math.floor(Math.random() * t.encourage.length)];
+          const hintText = t.hintUnitSelection;
+
+          feedback.className = "feedback-box feedback-warning";
+          feedback.innerHTML = `
+            <div><strong>${randomEnc}</strong></div>
+            <div style="margin-top:6px; font-size:0.95rem; color:#744210;">${hintText}</div>
+          `;
+          feedback.classList.remove('hidden');
+
+        } else {
+          // 嘗試三次皆錯，鎖定所有按鈕，並標示正確答案
+          document.querySelectorAll('.unit-opt-btn').forEach(b => {
+            b.disabled = true;
+            if (b.innerText.includes(q.ansZh)) {
+              b.classList.add('correct-choice');
+            }
+          });
+
+          feedback.className = "feedback-box feedback-danger";
+          const descText = currentLang === 'zh' ? q.descZh : q.descEn;
+          const stepHtml = t.stepUnitSelection.replace(/{desc}/g, descText)
+                                              .replace(/{ansZh}/g, q.ansZh)
+                                              .replace(/{ansEn}/g, q.ansEn);
+
+          feedback.innerHTML = `
+            <div style="font-size:0.95rem; line-height:1.6;">
+              <strong>${t.stepTitle}</strong><br>
+              ${stepHtml}
+            </div>
+          `;
+          feedback.classList.remove('hidden');
+
+          document.getElementById('btn-next').classList.remove('hidden');
+          document.getElementById('btn-next').focus();
+        }
+      }
+    }
+
     function checkAnswer() {
       const q = questions[currentQIndex];
       const t = i18n[currentLang];
@@ -1495,6 +1924,7 @@
       const valStr = input.value.trim();
       if (valStr === '') return;
 
+      const userValDisplay = valStr;
       const userNum = parseFloat(valStr);
       const targetNum = parseFloat(q.ans);
       const isExactMatch = (Math.abs(userNum - targetNum) < 0.001);
@@ -1520,7 +1950,6 @@
         input.classList.add('input-correct');
         input.disabled = true;
 
-        // 答對時：用綠色標記最短路徑並套用吸引效果
         if (q.type === 'measurement') {
           triggerMapHighlight(q);
         }
@@ -1537,7 +1966,7 @@
       } else {
         wrongAttempts++;
         if (records[currentQIndex].userFirstWrong === null) {
-          records[currentQIndex].userFirstWrong = valStr;
+          records[currentQIndex].userFirstWrong = userValDisplay;
         }
 
         input.classList.remove('input-correct', 'input-wrong');
@@ -1565,7 +1994,6 @@
           }, 600);
 
         } else {
-          // 第三次答錯時：用綠色標記最短路徑並套用吸引效果
           if (q.type === 'measurement') {
             triggerMapHighlight(q);
           }
@@ -1647,7 +2075,9 @@
 
     function getQuestionTitleText(q) {
       const isZh = currentLang === 'zh';
-      if (q.type === 'measurement') {
+      if (q.type === 'unit_selection') {
+        return isZh ? q.descZh : q.descEn;
+      } else if (q.type === 'measurement') {
         const startName = isZh ? `${q.startNodeObj.icon}${q.startNodeObj.nameZh}` : `${q.startNodeObj.icon}${q.startNodeObj.nameEn}`;
         const endName = isZh ? `${q.endNodeObj.icon}${q.endNodeObj.nameZh}` : `${q.endNodeObj.icon}${q.endNodeObj.nameEn}`;
         return `${startName} ➔ ${endName} (最短路徑)`;
@@ -1707,6 +2137,7 @@
       let modeName = t.unit1;
       if (currentMode === 'complex_to_single') modeName = t.unit2;
       else if (currentMode === 'measurement') modeName = t.unit3;
+      else if (currentMode === 'unit_selection') modeName = t.unit4;
 
       document.getElementById('report-unit-name').innerText = `1. ${modeName}`;
       document.getElementById('val-unit-mastery').innerText = `${correctCount} / ${total} (${accuracyPct}%)`;
@@ -1721,7 +2152,7 @@
         correctItems.forEach(item => {
           const qText = t.questionLabel.replace('{n}', item.qIndex);
           const qExprText = getQuestionTitleText(item.questionObj);
-          const unitStr = currentLang === 'zh' ? item.questionObj.targetUnit : item.questionObj.targetUnitEn;
+          const unitStr = item.questionObj.type === 'unit_selection' ? '' : (currentLang === 'zh' ? item.questionObj.targetUnit : item.questionObj.targetUnitEn);
           const itemDiv = document.createElement('div');
           itemDiv.className = 'item-card-correct';
           itemDiv.innerHTML = `
@@ -1743,7 +2174,7 @@
           const qText = t.questionLabel.replace('{n}', item.qIndex);
           const qExprText = getQuestionTitleText(item.questionObj);
           const userAnsDisplay = item.userFirstWrong !== null ? item.userFirstWrong : '-';
-          const unitStr = currentLang === 'zh' ? item.questionObj.targetUnit : item.questionObj.targetUnitEn;
+          const unitStr = item.questionObj.type === 'unit_selection' ? '' : (currentLang === 'zh' ? item.questionObj.targetUnit : item.questionObj.targetUnitEn);
           const itemDiv = document.createElement('div');
           itemDiv.className = 'item-card-wrong';
           itemDiv.innerHTML = `
